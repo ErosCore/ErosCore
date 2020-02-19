@@ -1,0 +1,827 @@
+# Copyright (c) 2013-2016 The Bitcoin Core developers
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+bin_PROGRAMS += qt/eros-qt
+EXTRA_LIBRARIES += qt/libbitcoinqt.a
+
+# eros qt core #
+include Makefile.qt_locale.include
+
+QT_FORMS_UI = \
+  qt/forms/addressbookpage.ui \
+  qt/forms/askpassphrasedialog.ui \
+  qt/forms/coincontroldialog.ui \
+  qt/forms/blockexplorer.ui \
+  qt/forms/editaddressdialog.ui \
+  qt/forms/governancepage.ui \
+  qt/forms/helpmessagedialog.ui \
+  qt/forms/intro.ui \
+  qt/forms/openuridialog.ui \
+  qt/forms/optionsdialog.ui \
+  qt/forms/rpcconsole.ui \
+  qt/eros/forms/loadingdialog.ui \
+  qt/forms/zerscontroldialog.ui \
+  qt/eros/forms/snackbar.ui \
+  qt/eros/forms/navmenuwidget.ui \
+  qt/eros/forms/lockunlock.ui \
+  qt/eros/forms/expandablebutton.ui \
+  qt/eros/forms/receivedialog.ui \
+  qt/eros/forms/walletpassworddialog.ui \
+  qt/eros/forms/topbar.ui \
+  qt/eros/forms/txrow.ui \
+  qt/eros/forms/dashboardwidget.ui \
+  qt/eros/forms/coincontrolerswidget.ui \
+  qt/eros/forms/addresslabelrow.ui \
+  qt/eros/forms/contactdropdownrow.ui \
+  qt/eros/forms/mninfodialog.ui \
+  qt/eros/forms/optionbutton.ui \
+  qt/eros/forms/masternodewizarddialog.ui \
+  qt/eros/forms/mnrow.ui \
+  qt/eros/forms/masternodeswidget.ui \
+  qt/eros/forms/myaddressrow.ui \
+  qt/eros/forms/csrow.ui \
+  qt/eros/forms/sendchangeaddressdialog.ui \
+  qt/eros/forms/sendconfirmdialog.ui \
+  qt/eros/forms/sendcustomfeedialog.ui \
+  qt/eros/forms/sendchangeaddressdialog.ui \
+  qt/eros/forms/sendmultirow.ui \
+  qt/eros/forms/send.ui \
+  qt/eros/forms/addnewaddressdialog.ui \
+  qt/eros/forms/addnewcontactdialog.ui \
+  qt/eros/forms/requestdialog.ui \
+  qt/eros/forms/receivewidget.ui \
+  qt/eros/forms/tooltipmenu.ui \
+  qt/eros/forms/addresseswidget.ui \
+  qt/eros/forms/defaultdialog.ui \
+  qt/eros/forms/denomgenerationdialog.ui \
+  qt/eros/forms/privacywidget.ui \
+  qt/eros/forms/coldstakingwidget.ui \
+  qt/eros/settings/forms/settingsbackupwallet.ui \
+  qt/eros/settings/forms/settingsbittoolwidget.ui \
+  qt/eros/settings/forms/settingsconsolewidget.ui \
+  qt/eros/settings/forms/settingsdisplayoptionswidget.ui \
+  qt/eros/settings/forms/settingsfaqwidget.ui \
+  qt/eros/settings/forms/settingsinformationwidget.ui \
+  qt/eros/settings/forms/settingsmainoptionswidget.ui \
+  qt/eros/settings/forms/settingsmultisenddialog.ui \
+  qt/eros/settings/forms/settingsmultisendwidget.ui \
+  qt/eros/settings/forms/settingssignmessagewidgets.ui \
+  qt/eros/settings/forms/settingswalletoptionswidget.ui \
+  qt/eros/settings/forms/settingswalletrepairwidget.ui \
+  qt/eros/settings/forms/settingswidget.ui \
+  qt/eros/forms/welcomecontentwidget.ui \
+  qt/eros/forms/splash.ui
+
+QT_MOC_CPP = \
+  qt/moc_addressbookpage.cpp \
+  qt/moc_addresstablemodel.cpp \
+  qt/moc_askpassphrasedialog.cpp \
+  qt/moc_bantablemodel.cpp \
+  qt/moc_bitcoinaddressvalidator.cpp \
+  qt/moc_bitcoinamountfield.cpp \
+  qt/eros/moc_erosgui.cpp \
+  qt/moc_bitcoinunits.cpp \
+  qt/moc_blockexplorer.cpp \
+  qt/moc_clientmodel.cpp \
+  qt/moc_coincontroldialog.cpp \
+  qt/moc_coincontroltreewidget.cpp \
+  qt/moc_csvmodelwriter.cpp \
+  qt/moc_editaddressdialog.cpp \
+  qt/moc_governancepage.cpp \
+  qt/moc_guiutil.cpp \
+  qt/moc_intro.cpp \
+  qt/moc_macdockiconhandler.cpp \
+  qt/moc_macnotificationhandler.cpp \
+  qt/moc_notificator.cpp \
+  qt/moc_openuridialog.cpp \
+  qt/moc_optionsdialog.cpp \
+  qt/moc_optionsmodel.cpp \
+  qt/moc_peertablemodel.cpp \
+  qt/moc_paymentserver.cpp \
+  qt/moc_qvalidatedlineedit.cpp \
+  qt/moc_qvaluecombobox.cpp \
+  qt/moc_proposalframe.cpp \
+  qt/moc_recentrequeststablemodel.cpp \
+  qt/moc_rpcconsole.cpp \
+  qt/moc_splashscreen.cpp \
+  qt/moc_trafficgraphwidget.cpp \
+  qt/moc_transactiondesc.cpp \
+  qt/moc_transactionfilterproxy.cpp \
+  qt/moc_transactiontablemodel.cpp \
+  qt/moc_utilitydialog.cpp \
+  qt/moc_walletmodel.cpp \
+  qt/eros/moc_loadingdialog.cpp \
+  qt/moc_zerscontroldialog.cpp \
+  qt/eros/moc_pwidget.cpp \
+  qt/eros/moc_snackbar.cpp \
+  qt/eros/moc_navmenuwidget.cpp \
+  qt/eros/moc_lockunlock.cpp \
+  qt/eros/moc_expandablebutton.cpp \
+  qt/eros/moc_furabstractlistitemdelegate.cpp \
+  qt/eros/moc_receivedialog.cpp \
+  qt/eros/moc_walletpassworddialog.cpp \
+  qt/eros/moc_pfborderimage.cpp \
+  qt/eros/moc_topbar.cpp \
+  qt/eros/moc_txrow.cpp \
+  qt/eros/moc_dashboardwidget.cpp \
+  qt/eros/moc_coincontrolerswidget.cpp \
+  qt/eros/moc_addresslabelrow.cpp \
+  qt/eros/moc_contactdropdownrow.cpp \
+  qt/eros/moc_mninfodialog.cpp \
+  qt/eros/moc_optionbutton.cpp \
+  qt/eros/moc_coldstakingmodel.cpp \
+  qt/eros/moc_mnmodel.cpp \
+  qt/eros/moc_masternodewizarddialog.cpp \
+  qt/eros/moc_mnrow.cpp \
+  qt/eros/moc_masternodeswidget.cpp \
+  qt/eros/moc_myaddressrow.cpp \
+  qt/eros/moc_csrow.cpp \
+  qt/eros/moc_contactsdropdown.cpp \
+  qt/eros/moc_sendchangeaddressdialog.cpp \
+  qt/eros/moc_sendconfirmdialog.cpp \
+  qt/eros/moc_sendcustomfeedialog.cpp \
+  qt/eros/moc_sendchangeaddressdialog.cpp \
+  qt/eros/moc_sendmultirow.cpp \
+  qt/eros/moc_send.cpp \
+  qt/eros/moc_addnewaddressdialog.cpp \
+  qt/eros/moc_addnewcontactdialog.cpp \
+  qt/eros/moc_requestdialog.cpp \
+  qt/eros/moc_receivewidget.cpp \
+  qt/eros/moc_tooltipmenu.cpp \
+  qt/eros/moc_addresseswidget.cpp \
+  qt/eros/moc_defaultdialog.cpp \
+  qt/eros/moc_denomgenerationdialog.cpp \
+  qt/eros/moc_privacywidget.cpp \
+  qt/eros/moc_coldstakingwidget.cpp \
+  qt/eros/settings/moc_settingsbackupwallet.cpp \
+  qt/eros/settings/moc_settingsbittoolwidget.cpp \
+  qt/eros/settings/moc_settingsconsolewidget.cpp \
+  qt/eros/settings/moc_settingsdisplayoptionswidget.cpp \
+  qt/eros/settings/moc_settingsfaqwidget.cpp \
+  qt/eros/settings/moc_settingsinformationwidget.cpp \
+  qt/eros/settings/moc_settingsmainoptionswidget.cpp \
+  qt/eros/settings/moc_settingsmultisenddialog.cpp \
+  qt/eros/settings/moc_settingsmultisendwidget.cpp \
+  qt/eros/settings/moc_settingssignmessagewidgets.cpp \
+  qt/eros/settings/moc_settingswalletoptionswidget.cpp \
+  qt/eros/settings/moc_settingswalletrepairwidget.cpp \
+  qt/eros/settings/moc_settingswidget.cpp \
+  qt/eros/moc_welcomecontentwidget.cpp \
+  qt/eros/moc_splash.cpp
+
+BITCOIN_MM = \
+  qt/macdockiconhandler.mm \
+  qt/macnotificationhandler.mm
+
+QT_MOC = \
+  qt/eros.moc \
+  qt/bitcoinamountfield.moc \
+  qt/intro.moc \
+  qt/rpcconsole.moc \
+  qt/eros/settings/moc_settingsconsolewidget.cpp
+
+QT_QRC_CPP = qt/qrc_eros.cpp
+QT_QRC = qt/eros.qrc
+QT_QRC_LOCALE_CPP = qt/qrc_eros_locale.cpp
+QT_QRC_LOCALE = qt/eros_locale.qrc
+
+PROTOBUF_CC = qt/paymentrequest.pb.cc
+PROTOBUF_H = qt/paymentrequest.pb.h
+PROTOBUF_PROTO = qt/paymentrequest.proto
+
+BITCOIN_QT_H = \
+  qt/addressbookpage.h \
+  qt/addresstablemodel.h \
+  qt/askpassphrasedialog.h \
+  qt/bantablemodel.h \
+  qt/bitcoinaddressvalidator.h \
+  qt/bitcoinamountfield.h \
+  qt/eros/erosgui.h \
+  qt/bitcoinunits.h \
+  qt/blockexplorer.h \
+  qt/clientmodel.h \
+  qt/coincontroldialog.h \
+  qt/coincontroltreewidget.h \
+  qt/csvmodelwriter.h \
+  qt/editaddressdialog.h \
+  qt/governancepage.h \
+  qt/guiconstants.h \
+  qt/guiutil.h \
+  qt/intro.h \
+  qt/macdockiconhandler.h \
+  qt/macnotificationhandler.h \
+  qt/networkstyle.h \
+  qt/notificator.h \
+  qt/openuridialog.h \
+  qt/optionsdialog.h \
+  qt/optionsmodel.h \
+  qt/paymentrequestplus.h \
+  qt/paymentserver.h \
+  qt/peertablemodel.h \
+  qt/platformstyle.h \
+  qt/proposalframe.h \
+  qt/qvalidatedlineedit.h \
+  qt/qvaluecombobox.h \
+  qt/recentrequeststablemodel.h \
+  qt/rpcconsole.h \
+  qt/splashscreen.h \
+  qt/trafficgraphwidget.h \
+  qt/transactiondesc.h \
+  qt/transactionfilterproxy.h \
+  qt/transactionrecord.h \
+  qt/transactiontablemodel.h \
+  qt/utilitydialog.h \
+  qt/walletmodel.h \
+  qt/walletmodeltransaction.h \
+  qt/eros/prunnable.h \
+  qt/eros/pfborderimage.h \
+  qt/eros/loadingdialog.h \
+  qt/winshutdownmonitor.h \
+  qt/zerscontroldialog.h \
+  qt/eros/pwidget.h \
+  qt/eros/guitransactionsutils.h \
+  qt/eros/snackbar.h \
+  qt/eros/navmenuwidget.h \
+  qt/eros/lockunlock.h \
+  qt/eros/receivedialog.h \
+  qt/eros/furlistrow.h \
+  qt/eros/furabstractlistitemdelegate.h \
+  qt/eros/txviewholder.h \
+  qt/eros/qtutils.h \
+  qt/eros/expandablebutton.h \
+  qt/eros/walletpassworddialog.h \
+  qt/eros/topbar.h \
+  qt/eros/txrow.h \
+  qt/eros/addressholder.h \
+  qt/eros/addressfilterproxymodel.h \
+  qt/eros/dashboardwidget.h \
+  qt/eros/coincontrolerswidget.h \
+  qt/eros/addresslabelrow.h \
+  qt/eros/contactdropdownrow.h \
+  qt/eros/mninfodialog.h \
+  qt/eros/optionbutton.h \
+  qt/eros/coldstakingmodel.h \
+  qt/eros/mnmodel.h \
+  qt/eros/masternodewizarddialog.h \
+  qt/eros/mnrow.h \
+  qt/eros/masternodeswidget.h \
+  qt/eros/myaddressrow.h \
+  qt/eros/csrow.h \
+  qt/eros/contactsdropdown.h \
+  qt/eros/sendchangeaddressdialog.h \
+  qt/eros/sendconfirmdialog.h \
+  qt/eros/sendcustomfeedialog.h \
+  qt/eros/sendchangeaddressdialog.h \
+  qt/eros/sendmultirow.h \
+  qt/eros/send.h \
+  qt/eros/addnewaddressdialog.h \
+  qt/eros/addnewcontactdialog.h \
+  qt/eros/requestdialog.h \
+  qt/eros/receivewidget.h \
+  qt/eros/tooltipmenu.h \
+  qt/eros/addresseswidget.h \
+  qt/eros/defaultdialog.h \
+  qt/eros/denomgenerationdialog.h \
+  qt/eros/privacywidget.h \
+  qt/eros/coldstakingwidget.h \
+  qt/eros/settings/settingsbackupwallet.h \
+  qt/eros/settings/settingsbittoolwidget.h \
+  qt/eros/settings/settingsconsolewidget.h \
+  qt/eros/settings/settingsdisplayoptionswidget.h \
+  qt/eros/settings/settingsfaqwidget.h \
+  qt/eros/settings/settingsinformationwidget.h \
+  qt/eros/settings/settingsmainoptionswidget.h \
+  qt/eros/settings/settingsmultisenddialog.h \
+  qt/eros/settings/settingsmultisendwidget.h \
+  qt/eros/settings/settingssignmessagewidgets.h \
+  qt/eros/settings/settingswalletoptionswidget.h \
+  qt/eros/settings/settingswalletrepairwidget.h \
+  qt/eros/settings/settingswidget.h \
+  qt/eros/welcomecontentwidget.h \
+  qt/eros/splash.h
+
+RES_ICONS = \
+  qt/res/icons/add.png \
+  qt/res/icons/address-book.png \
+  qt/res/icons/bitcoin.ico \
+  qt/res/icons/bitcoin.png \
+  qt/res/icons/bitcoin_testnet.ico \
+  qt/res/icons/bitcoin_testnet.png \
+  qt/res/icons/bitcoin_regtest.png \
+  qt/res/icons/browse.png \
+  qt/res/icons/clock1.png \
+  qt/res/icons/clock2.png \
+  qt/res/icons/clock3.png \
+  qt/res/icons/clock4.png \
+  qt/res/icons/clock5.png \
+  qt/res/icons/configure.png \
+  qt/res/icons/connect0_16.png \
+  qt/res/icons/connect1_16.png \
+  qt/res/icons/connect2_16.png \
+  qt/res/icons/connect3_16.png \
+  qt/res/icons/connect4_16.png \
+  qt/res/icons/debugwindow.png \
+  qt/res/icons/edit.png \
+  qt/res/icons/editcopy.png \
+  qt/res/icons/editpaste.png \
+  qt/res/icons/explorer.png \
+  qt/res/icons/export.png \
+  qt/res/icons/eye.png \
+  qt/res/icons/eye_minus.png \
+  qt/res/icons/eye_plus.png \
+  qt/res/icons/filesave.png \
+  qt/res/icons/history.png \
+  qt/res/icons/key.png \
+  qt/res/icons/lock_closed.png \
+  qt/res/icons/lock_open.png \
+  qt/res/icons/masternodes.png \
+  qt/res/icons/onion.png \
+  qt/res/icons/overview.png \
+  qt/res/icons/qrcode.png \
+  qt/res/icons/quit.png \
+  qt/res/icons/receive.png \
+  qt/res/icons/receive_dark.png \
+  qt/res/icons/privacy.png \
+  qt/res/icons/remove.png \
+  qt/res/icons/send.png \
+  qt/res/icons/send_dark.png \
+  qt/res/icons/governance.png \
+  qt/res/icons/governance_dark.png \
+  qt/res/icons/staking_active.png \
+  qt/res/icons/staking_inactive.png \
+  qt/res/icons/synced.png \
+  qt/res/icons/trade.png \
+  qt/res/icons/transaction0.png \
+  qt/res/icons/transaction2.png \
+  qt/res/icons/transaction_conflicted.png \
+  qt/res/icons/tx_inout.png \
+  qt/res/icons/tx_input.png \
+  qt/res/icons/tx_output.png \
+  qt/res/icons/tx_mined.png \
+  qt/res/icons/ic-transaction-received.svg \
+  qt/res/icons/ic-transaction-mint.svg \
+  qt/res/icons/ic-transaction-sent.svg \
+  qt/res/icons/ic-transaction-staked.svg \
+  qt/res/icons/unit_eros.png \
+  qt/res/icons/unit_meros.png \
+  qt/res/icons/unit_ueros.png \
+  qt/res/icons/unit_teros.png \
+  qt/res/icons/unit_tmeros.png \
+  qt/res/icons/unit_tueros.png \
+  qt/res/icons/yesvote.png \
+  qt/res/icons/novote.png \
+  qt/res/icons/abstainvote.png \
+  qt/eros/res/img/bg-dashboard-banner.png \
+  qt/eros/res/img/bg-multi-number-dark.svg \
+  qt/eros/res/img/ic-check-locked.svg \
+  qt/eros/res/img/ic-nav-address.svg \
+  qt/eros/res/img/ic-update.svg \
+  qt/eros/res/img/bg-multi-number.svg \
+  qt/eros/res/img/ic-check-mint-off.svg \
+  qt/eros/res/img/ic-nav-cold-staking.svg \
+  qt/eros/res/img/ic-nav-cold-staking-active.svg \
+  qt/eros/res/img/ic-nav-dashboard-active.svg \
+  qt/eros/res/img/ic-wallet-status-locked.svg \
+  qt/eros/res/img/bg-splash.svg \
+  qt/eros/res/img/bg-splash.png \
+  qt/eros/res/img/ic-check-mint.svg \
+  qt/eros/res/img/ic-nav-dashboard-hover.svg \
+  qt/eros/res/img/ic-wallet-status-staking.svg \
+  qt/eros/res/img/ic-check-peers-off.svg \
+  qt/eros/res/img/ic-nav-dashboard.svg \
+  qt/eros/res/img/ic-wallet-status-unlocked.svg \
+  qt/eros/res/img/ic-check-peers.svg \
+  qt/eros/res/img/ic-nav-master-active.svg \
+  qt/eros/res/img/ic-watch-password-white.svg \
+  qt/eros/res/img/bg-welcome-container.jpg \
+  qt/eros/res/img/bg-welcome-container.png \
+  qt/eros/res/img/bg-welcome-container.svg \
+  qt/eros/res/img/bg-welcome-container@2x.png \
+  qt/eros/res/img/bg-welcome-container@3x.png \
+  qt/eros/res/img/ic-check-staking-off.svg \
+  qt/eros/res/img/ic-nav-master-hover.svg \
+  qt/eros/res/img/ic-watch-password.svg \
+  qt/eros/res/img/bg-welcome.jpg \
+  qt/eros/res/img/bg-welcome.svg \
+  qt/eros/res/img/bg-welcome@2x.jpg \
+  qt/eros/res/img/bg-welcome@3x.jpg \
+  qt/eros/res/img/bg-welcome.png \
+  qt/eros/res/img/ic-check-staking.svg \
+  qt/eros/res/img/ic-nav-master.svg \
+  qt/eros/res/img/img-dashboard-banner.jpg \
+  qt/eros/res/img/btn-radio-active.svg \
+  qt/eros/res/img/ic-check-sync-off.svg \
+  qt/eros/res/img/ic-nav-privacy-active.svg \
+  qt/eros/res/img/img-empty-contacts.svg \
+  qt/eros/res/img/btn-radio-off.svg \
+  qt/eros/res/img/ic-check-sync.png \
+  qt/eros/res/img/ic-nav-privacy-hover.svg \
+  qt/eros/res/img/img-empty-dark-contacts.svg \
+  qt/eros/res/img/ic-contact-arrow-down.svg \
+  qt/eros/res/img/ic-contact-arrow-down-white.svg \
+  qt/eros/res/img/ic-check-sync.svg \
+  qt/eros/res/img/ic-check-faq.svg \
+  qt/eros/res/img/ic-nav-privacy.svg \
+  qt/eros/res/img/img-empty-dark-error.svg \
+  qt/eros/res/img/ic-add-label.svg \
+  qt/eros/res/img/ic-pending.svg \
+  qt/eros/res/img/ic-check-theme-dark.svg \
+  qt/eros/res/img/ic-nav-receive-active.svg \
+  qt/eros/res/img/img-empty-dark-masternode.svg \
+  qt/eros/res/img/ic-add-liliac.svg \
+  qt/eros/res/img/ic-check-theme-light.svg \
+  qt/eros/res/img/ic-nav-receive-hover.svg \
+  qt/eros/res/img/img-empty-dark-multisend.svg \
+  qt/eros/res/img/ic-add-purple.svg \
+  qt/eros/res/img/ic-check-white.svg \
+  qt/eros/res/img/ic-nav-receive.svg \
+  qt/eros/res/img/img-empty-dark-peers.svg \
+  qt/eros/res/img/ic-add.svg \
+  qt/eros/res/img/ic-check.svg \
+  qt/eros/res/img/ic-nav-send-active.svg \
+  qt/eros/res/img/img-empty-dark-staking-off.svg \
+  qt/eros/res/img/img-empty-dark-staking-on.svg \
+  qt/eros/res/img/ic-address-book-grey.svg \
+  qt/eros/res/img/ic-chevron-left.svg \
+  qt/eros/res/img/ic-nav-send-hover.svg \
+  qt/eros/res/img/img-empty-dark-transactions.svg \
+  qt/eros/res/img/ic-address-book-white.svg \
+  qt/eros/res/img/ic-chevron-right.svg \
+  qt/eros/res/img/ic-nav-send.svg \
+  qt/eros/res/img/img-empty-error.svg \
+  qt/eros/res/img/ic-address-book.svg \
+  qt/eros/res/img/ic-clear-liliac.svg \
+  qt/eros/res/img/ic-nav-settings-active.svg \
+  qt/eros/res/img/img-empty-masternode.svg \
+  qt/eros/res/img/ic-address-send-white.svg \
+  qt/eros/res/img/ic-clear-purple.svg \
+  qt/eros/res/img/ic-nav-settings-hover.svg \
+  qt/eros/res/img/img-empty-multisend.svg \
+  qt/eros/res/img/ic-address-send.svg \
+  qt/eros/res/img/ic-close-white.svg \
+  qt/eros/res/img/ic-nav-settings.svg \
+  qt/eros/res/img/img-empty-peers.svg \
+  qt/eros/res/img/img-empty-privacy.svg \
+  qt/eros/res/img/img-empty-privacy-dark.svg \
+  qt/eros/res/img/ic-arrow-drop-down-white.svg \
+  qt/eros/res/img/ic-close.svg \
+  qt/eros/res/img/ic-radio-liliac-on.svg \
+  qt/eros/res/img/img-empty-staking-off.svg \
+  qt/eros/res/img/ic-arrow-drop-down.svg \
+  qt/eros/res/img/ic-coin-ers.svg \
+  qt/eros/res/img/ic-receive-off.svg \
+  qt/eros/res/img/img-empty-staking-on.svg \
+  qt/eros/res/img/ic-arrow-drop-up-white.svg \
+  qt/eros/res/img/ic-coin-zers.png \
+  qt/eros/res/img/ic-receive-on.svg \
+  qt/eros/res/img/img-empty-transactions.svg \
+  qt/eros/res/img/ic-arrow-drop-up.svg \
+  qt/eros/res/img/ic-coin-zers.svg \
+  qt/eros/res/img/ic-received.svg \
+  qt/eros/res/img/img-logo-eros.png \
+  qt/eros/res/img/ic-arrow-drop-white-down.svg \
+  qt/eros/res/img/ic-combo-box.svg \
+  qt/eros/res/img/ic-send.svg \
+  qt/eros/res/img/img-logo-eros@2x.png \
+  qt/eros/res/img/ic-arrow-purple-down.svg \
+  qt/eros/res/img/ic-connect.svg \
+  qt/eros/res/img/ic-submenu-lock.svg \
+  qt/eros/res/img/img-logo-eros@3x.png \
+  qt/eros/res/img/img-logo-eros.svg \
+  qt/eros/res/img/ic-arrow-right-white.svg \
+  qt/eros/res/img/ic-arrow-left-white.svg \
+  qt/eros/res/img/ic-arrow-left.svg \
+  qt/eros/res/img/ic-copy-liliac.svg \
+  qt/eros/res/img/ic-submenu-staking.svg \
+  qt/eros/res/img/img-nav-logo-eros.png \
+  qt/eros/res/img/ic-arrow-right.svg \
+  qt/eros/res/img/ic-copy.svg \
+  qt/eros/res/img/ic-copy-big.svg \
+  qt/eros/res/img/ic-copy-big-white.svg \
+  qt/eros/res/img/ic-submenu-unlock.svg \
+  qt/eros/res/img/img-nav-logo.png \
+  qt/eros/res/img/ic-arrow-white-left.svg \
+  qt/eros/res/img/ic-exit.svg \
+  qt/eros/res/img/ic-switch-liliac-on.svg \
+  qt/eros/res/img/img-nav-logo.svg \
+  qt/eros/res/img/ic-arrow-white-right.svg \
+  qt/eros/res/img/ic-expand.svg \
+  qt/eros/res/img/ic-switch-off.svg \
+  qt/eros/res/img/img-qr-test-big.png \
+  qt/eros/res/img/ic-check-active.svg \
+  qt/eros/res/img/ic-folder.svg \
+  qt/eros/res/img/ic-switch-on.svg \
+  qt/eros/res/img/img-qr-test.png \
+  qt/eros/res/img/ic-check-box.svg \
+  qt/eros/res/img/ic-check-box-dark-active.svg \
+  qt/eros/res/img/ic-check-box-indeterminate.svg \
+  qt/eros/res/img/ic-check-box-liliac-indeterminate.svg \
+  qt/eros/res/img/ic-label-liliac.svg \
+  qt/eros/res/img/ic-transaction-warning.svg \
+  qt/eros/res/img/ic-transaction-mint.svg \
+  qt/eros/res/img/ic-transaction-mint-inactive.svg \
+  qt/eros/res/img/ic-check-cold-staking.svg \
+  qt/eros/res/img/ic-check-cold-staking-off.svg \
+  qt/eros/res/img/ic-check-cold-staking-enabled.svg \
+  qt/eros/res/img/dark/ic-transaction-cs-contract.svg \
+  qt/eros/res/img/dark/ic-transaction-cs-contract-inactive.svg \
+  qt/eros/res/img/img-qr.svg \
+  qt/eros/res/img/ic-check-connect-off.svg \
+  qt/eros/res/img/ic-check-tor-off.svg \
+  qt/eros/res/img/ic-check-tor.svg \
+  qt/eros/res/img/ic-label.svg \
+  qt/eros/res/img/ic-transaction-received.svg \
+  qt/eros/res/img/dark/ic-transaction-received.svg \
+  qt/eros/res/img/dark/ic-transaction-warning.svg \
+  qt/eros/res/img/dark/ic-transaction-mint.svg \
+  qt/eros/res/img/dark/ic-transaction-mint-inactive.svg \
+  qt/eros/res/img/ic-transaction-received-inactive.svg \
+  qt/eros/res/img/dark/ic-transaction-received-inactive.svg \
+  qt/eros/res/img/img-welcome-step1.png \
+  qt/eros/res/img/ic-check-connect.svg \
+  qt/eros/res/img/ic-menu-hover.svg \
+  qt/eros/res/img/ic-transaction-sent.svg \
+  qt/eros/res/img/ic-transaction-sent-inactive.svg \
+  qt/eros/res/img/dark/ic-transaction-sent.svg \
+  qt/eros/res/img/dark/ic-transaction-sent-inactive.svg \
+  qt/eros/res/img/img-welcome-step2.png \
+  qt/eros/res/img/ic-check-dark.svg \
+  qt/eros/res/img/ic-mint.svg \
+  qt/eros/res/img/ic-transaction-staked.svg \
+  qt/eros/res/img/ic-transaction-staked-inactive.svg \
+  qt/eros/res/img/dark/ic-transaction-staked.svg \
+  qt/eros/res/img/dark/ic-transaction-staked-inactive.svg \
+  qt/eros/res/img/img-welcome-step3.png \
+  qt/eros/res/img/ic-check-liliac-on.svg \
+  qt/eros/res/img/ic-nav-address-active.svg \
+  qt/eros/res/img/ic-unlock-staking.svg \
+  qt/eros/res/img/img-welcome-step4.png \
+  qt/eros/res/img/ic-check-locked-off.svg \
+  qt/eros/res/img/ic-nav-address-hover.svg \
+  qt/eros/res/img/ic-update-liliac.svg \
+  qt/eros/res/img/ic-arrow-drop-down-purple.svg \
+  qt/eros/res/img/ic-arrow-drop-up-purple.svg \
+  qt/eros/res/img/ic-check-liliac-indeterminate.svg \
+  qt/eros/res/img/ic-check-box-liliac-indeterminate.svg \
+  qt/eros/res/img/ic-transaction-stake-delegated.svg \
+  qt/eros/res/img/ic-transaction-stake-delegated-inactive.svg \
+  qt/eros/res/img/ic-transaction-stake-hot.svg \
+  qt/eros/res/img/ic-transaction-stake-hot-inactive.svg \
+  qt/eros/res/img/dark/ic-transaction-stake-hot.svg \
+  qt/eros/res/img/dark/ic-transaction-stake-hot-inactive.svg \
+  qt/eros/res/img/dark/ic-transaction-stake-delegated.svg \
+  qt/eros/res/img/dark/ic-transaction-stake-delegated-inactive.svg \
+  qt/eros/res/img/ic-transaction-cs-contract.svg \
+  qt/eros/res/img/ic-transaction-cs-contract-inactive.svg \
+  qt/eros/res/img/ic-check-box-indeterminate.svg \
+  qt/eros/res/img/ani-loading-dark.gif \
+  qt/eros/res/img/ani-loading.gif
+
+
+
+BITCOIN_QT_BASE_CPP = \
+  qt/bantablemodel.cpp \
+  qt/bitcoinaddressvalidator.cpp \
+  qt/bitcoinamountfield.cpp \
+  qt/eros/erosgui.cpp \
+  qt/bitcoinunits.cpp \
+  qt/blockexplorer.cpp \
+  qt/clientmodel.cpp \
+  qt/csvmodelwriter.cpp \
+  qt/guiutil.cpp \
+  qt/intro.cpp \
+  qt/networkstyle.cpp \
+  qt/notificator.cpp \
+  qt/optionsdialog.cpp \
+  qt/optionsmodel.cpp \
+  qt/peertablemodel.cpp \
+  qt/platformstyle.cpp \
+  qt/qvalidatedlineedit.cpp \
+  qt/qvaluecombobox.cpp \
+  qt/rpcconsole.cpp \
+  qt/splashscreen.cpp \
+  qt/trafficgraphwidget.cpp \
+  qt/utilitydialog.cpp
+
+BITCOIN_QT_WINDOWS_CPP = qt/winshutdownmonitor.cpp
+
+BITCOIN_QT_WALLET_CPP = \
+  qt/addressbookpage.cpp \
+  qt/addresstablemodel.cpp \
+  qt/askpassphrasedialog.cpp \
+  qt/blockexplorer.cpp \
+  qt/coincontroldialog.cpp \
+  qt/coincontroltreewidget.cpp \
+  qt/editaddressdialog.cpp \
+  qt/governancepage.cpp \
+  qt/openuridialog.cpp \
+  qt/paymentrequestplus.cpp \
+  qt/paymentserver.cpp \
+  qt/proposalframe.cpp \
+  qt/recentrequeststablemodel.cpp \
+  qt/transactiondesc.cpp \
+  qt/transactionfilterproxy.cpp \
+  qt/transactionrecord.cpp \
+  qt/transactiontablemodel.cpp \
+  qt/walletmodel.cpp \
+  qt/walletmodeltransaction.cpp \
+  qt/eros/loadingdialog.cpp \
+  qt/zerscontroldialog.cpp \
+  qt/eros/pwidget.cpp \
+  qt/eros/guitransactionsutils.cpp \
+  qt/eros/snackbar.cpp \
+  qt/eros/navmenuwidget.cpp \
+  qt/eros/lockunlock.cpp \
+  qt/eros/receivedialog.cpp \
+  qt/eros/furabstractlistitemdelegate.cpp \
+  qt/eros/txviewholder.cpp \
+  qt/eros/qtutils.cpp \
+  qt/eros/expandablebutton.cpp \
+  qt/eros/walletpassworddialog.cpp \
+  qt/eros/topbar.cpp \
+  qt/eros/txrow.cpp \
+  qt/eros/addressholder.cpp \
+  qt/eros/addressfilterproxymodel.cpp \
+  qt/eros/dashboardwidget.cpp \
+  qt/eros/coincontrolerswidget.cpp \
+  qt/eros/addresslabelrow.cpp \
+  qt/eros/contactdropdownrow.cpp \
+  qt/eros/contactsdropdown.cpp \
+  qt/eros/optionbutton.cpp \
+  qt/eros/mninfodialog.cpp \
+  qt/eros/coldstakingmodel.cpp \
+  qt/eros/mnmodel.cpp \
+  qt/eros/masternodewizarddialog.cpp \
+  qt/eros/mnrow.cpp \
+  qt/eros/masternodeswidget.cpp \
+  qt/eros/myaddressrow.cpp \
+  qt/eros/csrow.cpp \
+  qt/eros/sendchangeaddressdialog.cpp \
+  qt/eros/sendconfirmdialog.cpp \
+  qt/eros/sendcustomfeedialog.cpp \
+  qt/eros/sendchangeaddressdialog.cpp \
+  qt/eros/sendmultirow.cpp \
+  qt/eros/send.cpp \
+  qt/eros/addnewaddressdialog.cpp \
+  qt/eros/addnewcontactdialog.cpp \
+  qt/eros/requestdialog.cpp \
+  qt/eros/receivewidget.cpp \
+  qt/eros/tooltipmenu.cpp \
+  qt/eros/addresseswidget.cpp \
+  qt/eros/defaultdialog.cpp \
+  qt/eros/denomgenerationdialog.cpp \
+  qt/eros/privacywidget.cpp \
+  qt/eros/coldstakingwidget.cpp \
+  qt/eros/settings/settingsbackupwallet.cpp \
+  qt/eros/settings/settingsbittoolwidget.cpp \
+  qt/eros/settings/settingsconsolewidget.cpp \
+  qt/eros/settings/settingsdisplayoptionswidget.cpp \
+  qt/eros/settings/settingsfaqwidget.cpp \
+  qt/eros/settings/settingsinformationwidget.cpp \
+  qt/eros/settings/settingsmainoptionswidget.cpp \
+  qt/eros/settings/settingsmultisenddialog.cpp \
+  qt/eros/settings/settingsmultisendwidget.cpp \
+  qt/eros/settings/settingssignmessagewidgets.cpp \
+  qt/eros/settings/settingswalletoptionswidget.cpp \
+  qt/eros/settings/settingswalletrepairwidget.cpp \
+  qt/eros/settings/settingswidget.cpp \
+  qt/eros/welcomecontentwidget.cpp \
+  qt/eros/splash.cpp
+
+
+BITCOIN_QT_CPP = $(BITCOIN_QT_BASE_CPP)
+if TARGET_WINDOWS
+BITCOIN_QT_CPP += $(BITCOIN_QT_WINDOWS_CPP)
+endif
+if ENABLE_WALLET
+BITCOIN_QT_CPP += $(BITCOIN_QT_WALLET_CPP)
+endif
+
+RES_IMAGES = \
+  qt/res/images/about.png \
+  qt/res/images/splash.png \
+  qt/res/images/splash_testnet.png \
+  qt/res/images/splash_regtest.png \
+  qt/res/images/eros_logo_horizontal.png \
+  qt/res/images/downArrow_dark.png \
+  qt/res/images/downArrow_small_dark.png \
+  qt/res/images/downArrow_small.png \
+  qt/res/images/upArrow_small_dark.png \
+  qt/res/images/upArrow_small.png \
+  qt/res/images/leftArrow_small_dark.png \
+  qt/res/images/rightArrow_small_dark.png \
+  qt/res/images/qtreeview_selected.png
+
+RES_CSS = \
+  qt/res/css/default.css \
+  qt/eros/res/css/style_dark.css \
+  qt/eros/res/css/style_light.css
+
+RES_MOVIES = $(wildcard $(srcdir)/qt/res/movies/spinner-*.png)
+
+BITCOIN_RC = qt/res/eros-qt-res.rc
+
+BITCOIN_QT_INCLUDES = -I$(builddir)/qt -I$(srcdir)/qt -I$(srcdir)/qt/forms \
+  -I$(builddir)/qt/forms -DQT_NO_KEYWORDS
+
+qt_libbitcoinqt_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
+  $(QT_INCLUDES) $(QT_DBUS_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS) $(SVG_CFLAGS) $(CHARTS_CFLAGS)
+qt_libbitcoinqt_a_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+qt_libbitcoinqt_a_OBJCXXFLAGS = $(AM_OBJCXXFLAGS) $(QT_PIE_FLAGS)
+
+qt_libbitcoinqt_a_SOURCES = $(BITCOIN_QT_CPP) $(BITCOIN_QT_H) $(QT_FORMS_UI) \
+  $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES)
+
+nodist_qt_libbitcoinqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
+  $(PROTOBUF_H) $(QT_QRC_CPP) $(QT_QRC_LOCALE_CPP)
+
+# forms/foo.h -> forms/ui_foo.h
+QT_FORMS_H=$(join $(dir $(QT_FORMS_UI)),$(addprefix ui_, $(notdir $(QT_FORMS_UI:.ui=.h))))
+
+# Most files will depend on the forms and moc files as includes. Generate them
+# before anything else.
+$(QT_MOC): $(QT_FORMS_H)
+$(qt_libbitcoinqt_a_OBJECTS) $(qt_eros_qt_OBJECTS) : | $(QT_MOC)
+
+#Generating these with a half-written protobuf header leads to wacky results.
+#This makes sure it's done.
+$(QT_MOC): $(PROTOBUF_H)
+$(QT_MOC_CPP): $(PROTOBUF_H)
+
+# eros-qt binary #
+qt_eros_qt_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
+  $(QT_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS) $(SVG_CFLAGS) $(CHARTS_CFLAGS)
+qt_eros_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+
+qt_eros_qt_SOURCES = qt/eros.cpp
+if TARGET_DARWIN
+  qt_eros_qt_SOURCES += $(BITCOIN_MM)
+endif
+if TARGET_WINDOWS
+  qt_eros_qt_SOURCES += $(BITCOIN_RC)
+endif
+qt_eros_qt_LDADD = qt/libbitcoinqt.a $(LIBBITCOIN_SERVER)
+if ENABLE_WALLET
+qt_eros_qt_LDADD += $(LIBBITCOIN_UTIL) $(LIBBITCOIN_WALLET)
+endif
+if ENABLE_ZMQ
+qt_eros_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
+endif
+qt_eros_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBBITCOIN_ZEROCOIN) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
+  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(SVG_LIBS) $(CHARTS_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
+  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+qt_eros_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_eros_qt_LIBTOOLFLAGS = $(AM_LIBTOOLFLAGS) --tag CXX
+
+#locale/foo.ts -> locale/foo.qm
+QT_QM=$(QT_TS:.ts=.qm)
+
+SECONDARY: $(QT_QM)
+
+$(srcdir)/qt/erosstrings.cpp: $(libbitcoin_server_a_SOURCES) $(libbitcoin_wallet_a_SOURCES) $(libbitcoin_common_a_SOURCES) $(libbitcoin_zmq_a_SOURCES) $(libbitcoin_util_a_SOURCES)
+	@test -n $(XGETTEXT) || echo "xgettext is required for updating translations"
+	$(AM_V_GEN) cd $(srcdir); XGETTEXT=$(XGETTEXT) PACKAGE_NAME="$(PACKAGE_NAME)" $(PYTHON) ../share/qt/extract_strings_qt.py $^
+
+translate: $(srcdir)/qt/erosstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(BITCOIN_QT_BASE_CPP) qt/eros.cpp $(BITCOIN_QT_WINDOWS_CPP) $(BITCOIN_QT_WALLET_CPP) $(BITCOIN_QT_H) $(BITCOIN_MM)
+	@test -n $(LUPDATE) || echo "lupdate is required for updating translations"
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts $(srcdir)/qt/locale/eros_en.ts
+
+$(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
+	@test -f $(RCC)
+	@cp -f $< $(@D)/temp_$(<F)
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name eros_locale $(@D)/temp_$(<F) | \
+	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
+	@rm $(@D)/temp_$(<F)
+
+$(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES) $(PROTOBUF_H)
+	@test -f $(RCC)
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name eros $< | \
+	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
+
+CLEAN_QT = $(nodist_qt_libbitcoinqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno qt/temp_eros_locale.qrc
+
+CLEANFILES += $(CLEAN_QT)
+
+eros_qt_clean: FORCE
+	rm -f $(CLEAN_QT) $(qt_libbitcoinqt_a_OBJECTS) $(qt_eros_qt_OBJECTS) qt/eros-qt$(EXEEXT) $(LIBBITCOINQT)
+
+eros_qt : qt/eros-qt$(EXEEXT)
+
+ui_%.h: %.ui
+	@test -f $(UIC)
+	@$(MKDIR_P) $(@D)
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(UIC) -o $@ $< || (echo "Error creating $@"; false)
+
+%.moc: %.cpp
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(MOC) $(DEFAULT_INCLUDES) $(QT_INCLUDES) $(MOC_DEFS) $< | \
+	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
+
+moc_%.cpp: %.h
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(MOC) $(DEFAULT_INCLUDES) $(QT_INCLUDES) $(MOC_DEFS) $< | \
+	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
+
+%.qm: %.ts
+	@test -f $(LRELEASE)
+	@$(MKDIR_P) $(@D)
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LRELEASE) -silent $< -qm $@

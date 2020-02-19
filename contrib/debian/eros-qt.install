@@ -1,0 +1,6 @@
+usr/local/bin/eros-qt usr/bin
+share/pixmaps/eros32.xpm usr/share/pixmaps
+share/pixmaps/eros16.xpm usr/share/pixmaps
+share/pixmaps/eros128.png usr/share/pixmaps
+debian/eros-qt.desktop usr/share/applications
+debian/eros-qt.protocol usr/share/kde4/services/

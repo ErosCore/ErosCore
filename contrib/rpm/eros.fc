@@ -1,0 +1,8 @@
+/usr/bin/eros-cli		--	gen_context(system_u:object_r:eros_exec_t,s0)
+/usr/sbin/erosd		--	gen_context(system_u:object_r:eros_exec_t,s0)
+/usr/lib(64)?/eros/erosd		--	gen_context(system_u:object_r:eros_exec_t,s0)
+
+/etc/eros(/.*)?		gen_context(system_u:object_r:eros_conf_t,s0)
+/var/lib/eros(/.*)?		gen_context(system_u:object_r:eros_var_lib_t,s0)
+
+(/var)?/run/erosd(/.*)?   gen_context(system_u:object_r:eros_var_run_t,s0)

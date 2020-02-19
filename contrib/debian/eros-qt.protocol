@@ -1,0 +1,11 @@
+[Protocol]
+exec=eros-qt '%u'
+protocol=eros
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false

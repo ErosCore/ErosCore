@@ -1,0 +1,3 @@
+usr/local/bin/erosd usr/bin
+usr/local/bin/eros-cli usr/bin
+debian/examples/eros.conf etc/eros

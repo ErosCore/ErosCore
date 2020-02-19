@@ -1,0 +1,81 @@
+policy_module(eros, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type eros_t;
+type eros_exec_t;
+init_daemon_domain(eros_t, eros_exec_t)
+
+permissive eros_t;
+
+type eros_initrc_exec_t;
+init_script_file(eros_initrc_exec_t)
+
+type eros_conf_t;
+files_type(eros_conf_t)
+
+type eros_var_lib_t;
+files_type(eros_var_lib_t)
+
+type eros_var_run_t;
+files_type(eros_var_run_t)
+
+type eros_port_t;
+corenet_port(eros_port_t)
+
+########################################
+#
+# eros local policy
+#
+allow eros_t self:process { fork };
+
+allow eros_t self:fifo_file rw_fifo_file_perms;
+allow eros_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(eros_t, eros_conf_t, eros_conf_t)
+manage_files_pattern(eros_t, eros_conf_t, eros_conf_t)
+
+manage_dirs_pattern(eros_t, eros_var_lib_t, eros_var_lib_t)
+manage_files_pattern(eros_t, eros_var_lib_t, eros_var_lib_t)
+files_var_lib_filetrans(eros_t, eros_var_lib_t, { dir file })
+
+manage_dirs_pattern(eros_t, eros_var_run_t, eros_var_run_t)
+manage_files_pattern(eros_t, eros_var_run_t, eros_var_run_t)
+
+sysnet_dns_name_resolve(eros_t)
+corenet_all_recvfrom_unlabeled(eros_t)
+
+allow eros_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(eros_t)
+corenet_tcp_sendrecv_generic_node(eros_t)
+corenet_tcp_sendrecv_all_ports(eros_t)
+corenet_tcp_bind_generic_node(eros_t)
+
+gen_require(`
+    type eros_port_t;
+')
+allow eros_t eros_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type eros_port_t;
+')
+allow eros_t eros_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(eros_t)
+
+files_read_etc_files(eros_t)
+
+miscfiles_read_localization(eros_t)
+
+sysnet_dns_name_resolve(eros_t)
+
+allow eros_t eros_exec_t:file execute_no_trans;
+allow eros_t self:process setsched;
+corecmd_exec_ls(eros_t)
+corenet_tcp_connect_http_port(eros_t)
+dev_read_urand(eros_t)
+fs_getattr_xattr_fs(eros_t)
+kernel_read_system_state(eros_t)

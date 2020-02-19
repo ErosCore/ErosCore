@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=EROS Core
+Comment=EROS P2P Cryptocurrency
+Comment[fr]=EROS, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=EROS, eşten eşe kriptografik sanal para birimi
+Exec=eros-qt %u
+Terminal=false
+Type=Application
+Icon=eros128
+MimeType=x-scheme-handler/eros;
+Categories=Office;Finance;
+StartupWMClass=Eros-qt

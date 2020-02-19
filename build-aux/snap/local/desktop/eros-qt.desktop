@@ -1,0 +1,15 @@
+# http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-1.0.html
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=EROS Core
+Comment=EROS Core QT main network
+GenericName=EROS Digital Currency QT client main network
+Exec=eros-core.qt %u
+Terminal=false
+Type=Application
+Icon=${SNAP}/share/pixmaps/eros.png
+MimeType=x-scheme-handler/eros;
+Categories=X-Office;X-Finance;
+Keywords=internet;eros;zers;ers;core;wallet;qt;main;snap;launchpad;crypto;digital;currency;coin;token;zerocoin;
+Version=1.0
