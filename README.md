@@ -11,7 +11,7 @@ More information at [erosblockchain.com](http://www.erosblockchain.com)
 
 ### Coin Specs
 <table>
-<tr><td>Algo</td><td>Scrypt</td></tr>
+<tr><td>Algo</td><td>SHA-256</td></tr>
 <tr><td>Block Time</td><td>60 Seconds</td></tr>
 <tr><td>Difficulty Retargeting</td><td>Every Block</td></tr>
 <tr><td>Max Coin Supply (PoW Phase)</td><td>37.5 ERS</td></tr>
