@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2016-2020 The EROS developers
+// Copyright (c) 2016-2019 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,6 +9,7 @@
 #include "key.h"
 #include "keystore.h"
 #include "script/script.h"
+#include "script/sign.h"
 #include "script/standard.h"
 #include "util.h"
 
@@ -35,18 +36,11 @@ isminetype IsMine(const CKeyStore& keystore, const CTxDestination& dest)
 
 isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
 {
-    if(keystore.HaveWatchOnly(scriptPubKey))
-        return ISMINE_WATCH_ONLY;
-    if(keystore.HaveMultiSig(scriptPubKey))
-        return ISMINE_MULTISIG;
-
     std::vector<valtype> vSolutions;
     txnouttype whichType;
     if(!Solver(scriptPubKey, whichType, vSolutions)) {
         if(keystore.HaveWatchOnly(scriptPubKey))
-            return ISMINE_WATCH_ONLY;
-        if(keystore.HaveMultiSig(scriptPubKey))
-            return ISMINE_MULTISIG;
+            return ISMINE_WATCH_UNSOLVABLE;
 
         return ISMINE_NO;
     }
@@ -104,10 +98,11 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
     }
     }
 
-    if(keystore.HaveWatchOnly(scriptPubKey))
-        return ISMINE_WATCH_ONLY;
-    if(keystore.HaveMultiSig(scriptPubKey))
-        return ISMINE_MULTISIG;
+    if (keystore.HaveWatchOnly(scriptPubKey)) {
+        // TODO: This could be optimized some by doing some work after the above solver
+        CScript scriptSig;
+        return ProduceSignature(DummySignatureCreator(&keystore), scriptPubKey, scriptSig, false) ? ISMINE_WATCH_SOLVABLE : ISMINE_WATCH_UNSOLVABLE;
+    }
 
     return ISMINE_NO;
 }

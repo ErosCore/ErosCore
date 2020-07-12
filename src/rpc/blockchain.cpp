@@ -1,13 +1,15 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2020 The EROS developers
+// Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "base58.h"
 #include "checkpoints.h"
 #include "clientversion.h"
+#include "consensus/upgrades.h"
 #include "kernel.h"
 #include "main.h"
 #include "rpc/server.h"
@@ -15,6 +17,7 @@
 #include "txdb.h"
 #include "util.h"
 #include "utilmoneystr.h"
+#include "utilstrencodings.h"
 #include "wallet/wallet.h"
 #include "zers/zersmodule.h"
 #include "zerschain.h"
@@ -114,7 +117,7 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     for (const CTransaction& tx : block.vtx) {
         if (txDetails) {
             UniValue objTx(UniValue::VOBJ);
-            TxToJSON(tx, uint256(0), objTx);
+            TxToJSON(tx, UINT256_ZERO, objTx);
             txs.push_back(objTx);
         } else
             txs.push_back(tx.GetHash().GetHex());
@@ -133,37 +136,17 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     if (pnext)
         result.push_back(Pair("nextblockhash", pnext->GetBlockHash().GetHex()));
 
-    result.push_back(Pair("modifier", strprintf("%016x", blockindex->nStakeModifier)));
-    result.push_back(Pair("modifierV2", blockindex->nStakeModifierV2.GetHex()));
-
-    result.push_back(Pair("moneysupply",ValueFromAmount(blockindex->nMoneySupply)));
-
-    UniValue zersObj(UniValue::VOBJ);
-    for (auto denom : libzerocoin::zerocoinDenomList) {
-        zersObj.push_back(Pair(std::to_string(denom), ValueFromAmount(blockindex->mapZerocoinSupply.at(denom) * (denom*COIN))));
-    }
-    zersObj.push_back(Pair("total", ValueFromAmount(blockindex->GetZerocoinSupply())));
-
     //////////
     ////////// Coin stake data ////////////////
     /////////
     if (block.IsProofOfStake()) {
-        // First grab it
         uint256 hashProofOfStakeRet;
-        std::unique_ptr <CStakeInput> stake;
-        // Initialize the stake object (we should look for this in some other place and not initialize it every time..)
-        if (!initStakeInput(block, stake, blockindex->nHeight - 1))
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "Cannot initialize stake input");
-
-        unsigned int nTxTime = block.nTime;
-
-        // todo: Add the debug as param..
-        if (!GetHashProofOfStake(blockindex->pprev, stake.get(), nTxTime, false, hashProofOfStakeRet))
+        if (!GetStakeKernelHash(hashProofOfStakeRet, block, blockindex->pprev))
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Cannot get proof of stake hash");
 
-        std::string stakeModifier = (Params().IsStakeModifierV2(blockindex->nHeight) ?
-                                     blockindex->nStakeModifierV2.GetHex() :
-                                     strprintf("%016x", blockindex->nStakeModifier));
+        std::string stakeModifier = (Params().GetConsensus().NetworkUpgradeActive(blockindex->nHeight, Consensus::UPGRADE_V3_4) ?
+                                     blockindex->GetStakeModifierV2().GetHex() :
+                                     strprintf("%016x", blockindex->GetStakeModifierV1()));
         result.push_back(Pair("stakeModifier", stakeModifier));
         result.push_back(Pair("hashProofOfStake", hashProofOfStakeRet.GetHex()));
     }
@@ -368,9 +351,8 @@ UniValue mempoolToJSON(bool fVerbose = false)
     if (fVerbose) {
         LOCK(mempool.cs);
         UniValue o(UniValue::VOBJ);
-        for (const PAIRTYPE(uint256, CTxMemPoolEntry) & entry : mempool.mapTx) {
-            const uint256& hash = entry.first;
-            const CTxMemPoolEntry& e = entry.second;
+        for (const CTxMemPoolEntry& e : mempool.mapTx) {
+            const uint256& hash = e.GetTx().GetHash();
             UniValue info(UniValue::VOBJ);
             info.push_back(Pair("size", (int)e.GetTxSize()));
             info.push_back(Pair("fee", ValueFromAmount(e.GetFee())));
@@ -378,6 +360,9 @@ UniValue mempoolToJSON(bool fVerbose = false)
             info.push_back(Pair("height", (int)e.GetHeight()));
             info.push_back(Pair("startingpriority", e.GetPriority(e.GetHeight())));
             info.push_back(Pair("currentpriority", e.GetPriority(chainActive.Height())));
+            info.push_back(Pair("descendantcount", e.GetCountWithDescendants()));
+            info.push_back(Pair("descendantsize", e.GetSizeWithDescendants()));
+            info.push_back(Pair("descendantfees", e.GetFeesWithDescendants()));
             const CTransaction& tx = e.GetTx();
             std::set<std::string> setDepends;
             for (const CTxIn& txin : tx.vin) {
@@ -431,6 +416,9 @@ UniValue getrawmempool(const UniValue& params, bool fHelp)
             "    \"height\" : n,           (numeric) block height when transaction entered pool\n"
             "    \"startingpriority\" : n, (numeric) priority when transaction entered pool\n"
             "    \"currentpriority\" : n,  (numeric) transaction priority now\n"
+            "    \"descendantcount\" : n,  (numeric) number of in-mempool descendant transactions (including this one)\n"
+            "    \"descendantsize\" : n,   (numeric) size of in-mempool descendants (including this one)\n"
+            "    \"descendantfees\" : n,   (numeric) fees of in-mempool descendants (including this one)\n"
             "    \"depends\" : [           (array) unconfirmed transactions used as inputs for this transaction\n"
             "        \"transactionid\",    (string) parent transaction id\n"
             "       ... ]\n"
@@ -506,19 +494,6 @@ UniValue getblock(const UniValue& params, bool fHelp)
             "  \"difficulty\" : x.xxx,  (numeric) The difficulty\n"
             "  \"previousblockhash\" : \"hash\",  (string) The hash of the previous block\n"
             "  \"nextblockhash\" : \"hash\"       (string) The hash of the next block\n"
-            "  \"moneysupply\" : \"supply\"       (numeric) The money supply when this block was added to the blockchain\n"
-            "  \"zERSsupply\" :\n"
-            "  {\n"
-            "     \"1\" : n,            (numeric) supply of 1 zERS denomination\n"
-            "     \"5\" : n,            (numeric) supply of 5 zERS denomination\n"
-            "     \"10\" : n,           (numeric) supply of 10 zERS denomination\n"
-            "     \"50\" : n,           (numeric) supply of 50 zERS denomination\n"
-            "     \"100\" : n,          (numeric) supply of 100 zERS denomination\n"
-            "     \"500\" : n,          (numeric) supply of 500 zERS denomination\n"
-            "     \"1000\" : n,         (numeric) supply of 1000 zERS denomination\n"
-            "     \"5000\" : n,         (numeric) supply of 5000 zERS denomination\n"
-            "     \"total\" : n,        (numeric) The total supply of all zERS denominations\n"
-            "  },\n"
             "  \"stakeModifier\" : \"xxx\",       (string) Proof of Stake modifier\n"
             "  \"hashProofOfStake\" : \"hash\",   (string) Proof of Stake hash\n"
             "  }\n"
@@ -534,7 +509,7 @@ UniValue getblock(const UniValue& params, bool fHelp)
     LOCK(cs_main);
 
     std::string strHash = params[0].get_str();
-    uint256 hash(strHash);
+    uint256 hash(uint256S(strHash));
 
     bool fVerbose = true;
     if (params.size() > 1)
@@ -590,7 +565,7 @@ UniValue getblockheader(const UniValue& params, bool fHelp)
             HelpExampleRpc("getblockheader", "\"00000000000fd08c2fb661d2fcb0d49abb3a91e5f27082ce64feed3b4dede2e2\""));
 
     std::string strHash = params[0].get_str();
-    uint256 hash(strHash);
+    uint256 hash(uint256S(strHash));
 
     bool fVerbose = true;
     if (params.size() > 1)
@@ -633,8 +608,6 @@ UniValue gettxoutsetinfo(const UniValue& params, bool fHelp)
             "\nExamples:\n" +
             HelpExampleCli("gettxoutsetinfo", "") + HelpExampleRpc("gettxoutsetinfo", ""));
 
-    LOCK(cs_main);
-
     UniValue ret(UniValue::VOBJ);
 
     CCoinsStats stats;
@@ -667,7 +640,7 @@ UniValue gettxout(const UniValue& params, bool fHelp)
             "{\n"
             "  \"bestblock\" : \"hash\",    (string) the block hash\n"
             "  \"confirmations\" : n,       (numeric) The number of confirmations\n"
-            "  \"value\" : x.xxx,           (numeric) The transaction value in btc\n"
+            "  \"value\" : x.xxx,           (numeric) The transaction value in ERS\n"
             "  \"scriptPubKey\" : {         (json object)\n"
             "     \"asm\" : \"code\",       (string) \n"
             "     \"hex\" : \"hex\",        (string) \n"
@@ -695,7 +668,7 @@ UniValue gettxout(const UniValue& params, bool fHelp)
     UniValue ret(UniValue::VOBJ);
 
     std::string strHash = params[0].get_str();
-    uint256 hash(strHash);
+    uint256 hash(uint256S(strHash));
     int n = params[1].get_int();
     bool fMempool = true;
     if (params.size() > 2)
@@ -763,31 +736,73 @@ UniValue verifychain(const UniValue& params, bool fHelp)
 }
 
 /** Implementation of IsSuperMajority with better feedback */
-static UniValue SoftForkMajorityDesc(int minVersion, CBlockIndex* pindex, int nRequired)
+static UniValue SoftForkMajorityDesc(int version, CBlockIndex* pindex, const Consensus::Params& consensusParams)
 {
-    int nFound = 0;
-    CBlockIndex* pstart = pindex;
-    for (int i = 0; i < Params().ToCheckBlockUpgradeMajority() && pstart != NULL; i++)
-    {
-        if (pstart->nVersion >= minVersion)
-            ++nFound;
-        pstart = pstart->pprev;
-    }
     UniValue rv(UniValue::VOBJ);
-    rv.push_back(Pair("status", nFound >= nRequired));
-    rv.push_back(Pair("found", nFound));
-    rv.push_back(Pair("required", nRequired));
-    rv.push_back(Pair("window", Params().ToCheckBlockUpgradeMajority()));
+    Consensus::UpgradeIndex idx;
+    switch(version) {
+    case 1:
+    case 2:
+    case 3:
+        idx = Consensus::BASE_NETWORK;
+        break;
+    case 4:
+        idx = Consensus::UPGRADE_ZC;
+        break;
+    case 5:
+        idx = Consensus::UPGRADE_BIP65;
+        break;
+    case 6:
+        idx = Consensus::UPGRADE_V3_4;
+        break;
+    case 7:
+        idx = Consensus::UPGRADE_V4_0;
+        break;
+    default:
+        rv.push_back(Pair("status", false));
+        return rv;
+    }
+    rv.push_back(Pair("status", consensusParams.NetworkUpgradeActive(pindex->nHeight, idx)));
     return rv;
 }
 static UniValue SoftForkDesc(const std::string &name, int version, CBlockIndex* pindex)
 {
+    const Consensus::Params& consensus = Params().GetConsensus();
     UniValue rv(UniValue::VOBJ);
     rv.push_back(Pair("id", name));
     rv.push_back(Pair("version", version));
-    rv.push_back(Pair("enforce", SoftForkMajorityDesc(version, pindex, Params().EnforceBlockUpgradeMajority())));
-    rv.push_back(Pair("reject", SoftForkMajorityDesc(version, pindex, Params().RejectBlockOutdatedMajority())));
+    rv.push_back(Pair("reject", SoftForkMajorityDesc(version, pindex, consensus)));
     return rv;
+}
+
+static UniValue NetworkUpgradeDesc(const Consensus::Params& consensusParams, Consensus::UpgradeIndex idx, int height)
+{
+    UniValue rv(UniValue::VOBJ);
+    auto upgrade = NetworkUpgradeInfo[idx];
+    rv.push_back(Pair("activationheight", consensusParams.vUpgrades[idx].nActivationHeight));
+    switch (NetworkUpgradeState(height, consensusParams, idx)) {
+        case UPGRADE_DISABLED: rv.push_back(Pair("status", "disabled")); break;
+        case UPGRADE_PENDING: rv.push_back(Pair("status", "pending")); break;
+        case UPGRADE_ACTIVE: rv.push_back(Pair("status", "active")); break;
+    }
+    rv.push_back(Pair("info", upgrade.strInfo));
+    return rv;
+}
+
+void NetworkUpgradeDescPushBack(
+        UniValue& networkUpgrades,
+        const Consensus::Params& consensusParams,
+        Consensus::UpgradeIndex idx,
+        int height)
+{
+    // Network upgrades with an activation height of NO_ACTIVATION_HEIGHT are
+    // hidden. This is used when network upgrade implementations are merged
+    // without specifying the activation height.
+    if (consensusParams.vUpgrades[idx].nActivationHeight != Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT) {
+        networkUpgrades.push_back(Pair(
+                NetworkUpgradeInfo[idx].strName,
+                NetworkUpgradeDesc(consensusParams, idx, height)));
+    }
 }
 
 UniValue getblockchaininfo(const UniValue& params, bool fHelp)
@@ -810,21 +825,25 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
             "     {\n"
             "        \"id\": \"xxxx\",        (string) name of softfork\n"
             "        \"version\": xx,         (numeric) block version\n"
-            "        \"enforce\": {           (object) progress toward enforcing the softfork rules for new-version blocks\n"
+            "        \"reject\": {           (object) progress toward rejecting pre-softfork blocks\n"
             "           \"status\": xx,       (boolean) true if threshold reached\n"
-            "           \"found\": xx,        (numeric) number of blocks with the new version found\n"
-            "           \"required\": xx,     (numeric) number of blocks required to trigger\n"
-            "           \"window\": xx,       (numeric) maximum size of examined window of recent blocks\n"
             "        },\n"
-            "        \"reject\": { ... }      (object) progress toward rejecting pre-softfork blocks (same fields as \"enforce\")\n"
             "     }, ...\n"
-            "  ]\n"
+            "  ],\n"
+            "  \"upgrades\": {                (object) status of network upgrades\n"
+            "     \"name\" : {                (string) name of upgrade\n"
+            "        \"activationheight\": xxxxxx,  (numeric) block height of activation\n"
+            "        \"status\": \"xxxx\",      (string) status of upgrade\n"
+            "        \"info\": \"xxxx\",        (string) additional information about upgrade\n"
+            "     }, ...\n"
             "}\n"
 
             "\nExamples:\n" +
             HelpExampleCli("getblockchaininfo", "") + HelpExampleRpc("getblockchaininfo", ""));
 
     LOCK(cs_main);
+
+    const Consensus::Params& consensusParams = Params().GetConsensus();
 
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("chain", Params().NetworkIDString()));
@@ -838,6 +857,12 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
     UniValue softforks(UniValue::VARR);
     softforks.push_back(SoftForkDesc("bip65", 5, tip));
     obj.push_back(Pair("softforks",             softforks));
+    UniValue upgrades(UniValue::VOBJ);
+    for (int i = Consensus::BASE_NETWORK + 1; i < (int) Consensus::MAX_NETWORK_UPGRADES; i++) {
+        NetworkUpgradeDescPushBack(upgrades, consensusParams, Consensus::UpgradeIndex(i), tip->nHeight);
+    }
+    obj.push_back(Pair("upgrades", upgrades));
+
     return obj;
 }
 
@@ -989,7 +1014,7 @@ UniValue mempoolInfoToJSON()
     UniValue ret(UniValue::VOBJ);
     ret.push_back(Pair("size", (int64_t) mempool.size()));
     ret.push_back(Pair("bytes", (int64_t) mempool.GetTotalTxSize()));
-    //ret.push_back(Pair("usage", (int64_t) mempool.DynamicMemoryUsage()));
+    ret.push_back(Pair("usage", (int64_t) mempool.DynamicMemoryUsage()));
 
     return ret;
 }
@@ -1005,6 +1030,7 @@ UniValue getmempoolinfo(const UniValue& params, bool fHelp)
             "{\n"
             "  \"size\": xxxxx                (numeric) Current tx count\n"
             "  \"bytes\": xxxxx               (numeric) Sum of all tx sizes\n"
+            "  \"usage\": xxxxx               (numeric) Total memory usage for the mempool\n"
             "}\n"
 
             "\nExamples:\n" +
@@ -1027,7 +1053,7 @@ UniValue invalidateblock(const UniValue& params, bool fHelp)
             HelpExampleCli("invalidateblock", "\"blockhash\"") + HelpExampleRpc("invalidateblock", "\"blockhash\""));
 
     std::string strHash = params[0].get_str();
-    uint256 hash(strHash);
+    uint256 hash(uint256S(strHash));
     CValidationState state;
 
     {
@@ -1065,7 +1091,7 @@ UniValue reconsiderblock(const UniValue& params, bool fHelp)
             HelpExampleCli("reconsiderblock", "\"blockhash\"") + HelpExampleRpc("reconsiderblock", "\"blockhash\""));
 
     std::string strHash = params[0].get_str();
-    uint256 hash(strHash);
+    uint256 hash(uint256S(strHash));
     CValidationState state;
 
     {
@@ -1113,7 +1139,7 @@ UniValue findserial(const UniValue& params, bool fHelp)
     if (!bnSerial)
     throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid serial");
 
-    uint256 txid = 0;
+    uint256 txid;
     bool fSuccess = zerocoinDB->ReadCoinSpend(bnSerial, txid);
 
     UniValue ret(UniValue::VOBJ);
@@ -1155,61 +1181,6 @@ void validaterange(const UniValue& params, int& heightStart, int& heightEnd, int
     }
 }
 
-UniValue getmintsinblocks(const UniValue& params, bool fHelp) {
-    if (fHelp || params.size() != 3)
-        throw std::runtime_error(
-                "getmintsinblocks height range coinDenomination\n"
-                "\nReturns the number of mints of a certain denomination"
-                "\noccurred in blocks [height, height+1, height+2, ..., height+range-1]\n"
-
-                "\nArguments:\n"
-                "1. height             (numeric, required) block height where the search starts.\n"
-                "2. range              (numeric, required) number of blocks to include.\n"
-                "3. coinDenomination   (numeric, required) coin denomination.\n"
-
-                "\nResult:\n"
-                "{\n"
-                "  \"Starting block\": \"x\"           (integer) First counted block\n"
-                "  \"Ending block\": \"x\"             (integer) Last counted block\n"
-                "  \"Number of d-denom mints\": \"x\"  (integer) number of mints of the required d denomination\n"
-                "}\n"
-
-                "\nExamples:\n" +
-                HelpExampleCli("getmintsinblocks", "1200000 1000 5") +
-                HelpExampleRpc("getmintsinblocks", "1200000, 1000, 5"));
-
-    int heightStart, heightEnd;
-    validaterange(params, heightStart, heightEnd, Params().Zerocoin_StartHeight());
-
-    int d = params[2].get_int();
-    libzerocoin::CoinDenomination denom = libzerocoin::IntToZerocoinDenomination(d);
-    if (denom == libzerocoin::CoinDenomination::ZQ_ERROR)
-        throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid denomination. Must be in {1, 5, 10, 50, 100, 500, 1000, 5000}");
-
-    int num_of_mints = 0;
-    {
-        LOCK(cs_main);
-        CBlockIndex* pindex = chainActive[heightStart];
-
-        while (true) {
-            num_of_mints += count(pindex->vMintDenominationsInBlock.begin(), pindex->vMintDenominationsInBlock.end(), denom);
-            if (pindex->nHeight < heightEnd) {
-                pindex = chainActive.Next(pindex);
-            } else {
-                break;
-            }
-        }
-    }
-
-    UniValue obj(UniValue::VOBJ);
-    obj.push_back(Pair("Starting block", heightStart));
-    obj.push_back(Pair("Ending block", heightEnd-1));
-    obj.push_back(Pair("Number of "+ std::to_string(d) +"-denom mints", num_of_mints));
-
-    return obj;
-}
-
-
 UniValue getserials(const UniValue& params, bool fHelp) {
     if (fHelp || params.size() < 2 || params.size() > 3)
         throw std::runtime_error(
@@ -1226,7 +1197,8 @@ UniValue getserials(const UniValue& params, bool fHelp) {
             HelpExampleRpc("getserials", "1254000, 1000"));
 
     int heightStart, heightEnd;
-    validaterange(params, heightStart, heightEnd, Params().Zerocoin_StartHeight());
+    const int heightMax = Params().GetConsensus().vUpgrades[Consensus::UPGRADE_ZC].nActivationHeight;
+    validaterange(params, heightStart, heightEnd, heightMax);
 
     bool fVerbose = false;
     if (params.size() > 2) {
@@ -1267,7 +1239,7 @@ UniValue getserials(const UniValue& params, bool fHelp) {
                     if (!ExtractDestinations(tx.vout[0].scriptPubKey, type, addresses, nRequired)) {
                         spentTo = strprintf("type: %d", GetTxnOutputType(type));
                     } else {
-                        spentTo = CBitcoinAddress(addresses[0]).ToString();
+                        spentTo = EncodeDestination(addresses[0]);
                     }
                 }
             }
@@ -1283,7 +1255,7 @@ UniValue getserials(const UniValue& params, bool fHelp) {
                         if(!GetOutput(txin.prevout.hash, txin.prevout.n, state, prevOut)){
                             throw JSONRPCError(RPC_INTERNAL_ERROR, "public zerocoin spend prev output not found");
                         }
-                        libzerocoin::ZerocoinParams *params = Params().Zerocoin_Params(false);
+                        libzerocoin::ZerocoinParams *params = Params().GetConsensus().Zerocoin_Params(false);
                         PublicCoinSpend publicSpend(params);
                         if (!ZERSModule::parseCoinSpend(txin, tx, prevOut, publicSpend)) {
                             throw JSONRPCError(RPC_INTERNAL_ERROR, "public zerocoin spend parse failed");
@@ -1344,11 +1316,6 @@ UniValue getblockindexstats(const UniValue& params, bool fHelp) {
                 "  \"last_block\": \"x\"             (integer) Last counted block\n"
                 "  \"txcount\": xxxxx                (numeric) tx count (excluding coinbase/coinstake)\n"
                 "  \"txcount_all\": xxxxx            (numeric) tx count (including coinbase/coinstake)\n"
-                "  \"mintcount\": {              [if fFeeOnly=False]\n"
-                "        \"denom_1\": xxxx           (numeric) number of mints of denom_1 occurred over the block range\n"
-                "        \"denom_5\": xxxx           (numeric) number of mints of denom_5 occurred over the block range\n"
-                "         ...                    ... number of mints of other denominations: ..., 10, 50, 100, 500, 1000, 5000\n"
-                "  }\n"
                 "  \"spendcount\": {             [if fFeeOnly=False]\n"
                 "        \"denom_1\": xxxx           (numeric) number of spends of denom_1 occurred over the block range\n"
                 "        \"denom_5\": xxxx           (numeric) number of spends of denom_5 occurred over the block range\n"
@@ -1387,11 +1354,9 @@ UniValue getblockindexstats(const UniValue& params, bool fHelp) {
     int64_t nTxCount = 0;
     int64_t nTxCount_all = 0;
 
-    std::map<libzerocoin::CoinDenomination, int64_t> mapMintCount;
     std::map<libzerocoin::CoinDenomination, int64_t> mapSpendCount;
     std::map<libzerocoin::CoinDenomination, int64_t> mapPublicSpendCount;
     for (auto& denom : libzerocoin::zerocoinDenomList) {
-        mapMintCount.insert(std::make_pair(denom, 0));
         mapSpendCount.insert(std::make_pair(denom, 0));
         mapPublicSpendCount.insert(std::make_pair(denom, 0));
     }
@@ -1456,14 +1421,7 @@ UniValue getblockindexstats(const UniValue& params, bool fHelp) {
             nFees_all += nValueIn - nValueOut;
             if (!tx.HasZerocoinMintOutputs()) {
                 nFees += nValueIn - nValueOut;
-                nBytes += tx.GetSerializeSize(SER_NETWORK, CLIENT_VERSION);
-            }
-        }
-
-        // add mints to map
-        if (!fFeeOnly) {
-            for (auto& denom : libzerocoin::zerocoinDenomList) {
-                mapMintCount[denom] += count(pindex->vMintDenominationsInBlock.begin(), pindex->vMintDenominationsInBlock.end(), denom);
+                nBytes += GetSerializeSize(tx, SER_NETWORK, CLIENT_VERSION);
             }
         }
 
@@ -1486,11 +1444,9 @@ UniValue getblockindexstats(const UniValue& params, bool fHelp) {
         UniValue spend_obj(UniValue::VOBJ);
         UniValue pubspend_obj(UniValue::VOBJ);
         for (auto& denom : libzerocoin::zerocoinDenomList) {
-            mint_obj.push_back(Pair(strprintf("denom_%d", ZerocoinDenominationToInt(denom)), mapMintCount[denom]));
             spend_obj.push_back(Pair(strprintf("denom_%d", ZerocoinDenominationToInt(denom)), mapSpendCount[denom]));
             pubspend_obj.push_back(Pair(strprintf("denom_%d", ZerocoinDenominationToInt(denom)), mapPublicSpendCount[denom]));
         }
-        ret.push_back(Pair("mintcount", mint_obj));
         ret.push_back(Pair("spendcount", spend_obj));
         ret.push_back(Pair("publicspendcount", pubspend_obj));
 

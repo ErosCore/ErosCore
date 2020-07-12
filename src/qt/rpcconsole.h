@@ -1,5 +1,5 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2017-2018 The EROS developers
+// Copyright (c) 2017-2019 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -83,7 +83,8 @@ public Q_SLOTS:
     void walletResync();
 
     void reject();
-    void message(int category, const QString& message, bool html = false);
+    void message(int category, const QString &msg) { message(category, msg, false); }
+    void message(int category, const QString &message, bool html);
     /** Set number of connections shown in the UI */
     void setNumConnections(int count);
     /** Set number of blocks shown in the UI */

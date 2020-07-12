@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2020 The EROS developers
+// Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -34,8 +35,8 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QSslCertificate>
+#include <QSslConfiguration>
 #include <QSslError>
-#include <QSslSocket>
 #include <QStringList>
 #include <QTextDocument>
 #include <QUrlQuery>
@@ -125,9 +126,9 @@ void PaymentServer::LoadRootCAs(X509_STORE* _store)
     if (certFile != "-system-") {
         certList = QSslCertificate::fromPath(certFile);
         // Use those certificates when fetching payment requests, too:
-        QSslSocket::setDefaultCaCertificates(certList);
+        QSslConfiguration::defaultConfiguration().setCaCertificates(certList);
     } else
-        certList = QSslSocket::systemCaCertificates();
+        certList = QSslConfiguration::systemCaCertificates();
 
     int nRootCerts = 0;
     const QDateTime currentTime = QDateTime::currentDateTime();
@@ -193,11 +194,9 @@ void PaymentServer::ipcParseCommandLine(int argc, char* argv[])
 
             SendCoinsRecipient r;
             if (GUIUtil::parseBitcoinURI(arg, &r) && !r.address.isEmpty()) {
-                CBitcoinAddress address(r.address.toStdString());
-
-                if (address.IsValid(Params(CBaseChainParams::MAIN))) {
+                if (IsValidDestinationString(r.address.toStdString(), false, Params(CBaseChainParams::MAIN))) {
                     SelectParams(CBaseChainParams::MAIN);
-                } else if (address.IsValid(Params(CBaseChainParams::TESTNET))) {
+                } else if (IsValidDestinationString(r.address.toStdString(), false, Params(CBaseChainParams::TESTNET))) {
                     SelectParams(CBaseChainParams::TESTNET);
                 }
             }
@@ -287,8 +286,8 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) : QObject(p
             QMessageBox::critical(0, tr("Payment request error"),
                 tr("Cannot start eros: click-to-pay handler"));
         } else {
-            connect(uriServer, SIGNAL(newConnection()), this, SLOT(handleURIConnection()));
-            connect(this, SIGNAL(receivedPaymentACK(QString)), this, SLOT(handlePaymentACK(QString)));
+            connect(uriServer, &QLocalServer::newConnection, this, &PaymentServer::handleURIConnection);
+            connect(this, &PaymentServer::receivedPaymentACK, this, &PaymentServer::handlePaymentACK);
         }
     }
 }
@@ -338,10 +337,8 @@ void PaymentServer::initNetManager()
     } else
         qDebug() << "PaymentServer::initNetManager : No active proxy server found.";
 
-    connect(netManager, SIGNAL(finished(QNetworkReply*)),
-        this, SLOT(netRequestFinished(QNetworkReply*)));
-    connect(netManager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
-        this, SLOT(reportSslErrors(QNetworkReply*, const QList<QSslError>&)));
+    connect(netManager, &QNetworkAccessManager::finished, this, &PaymentServer::netRequestFinished);
+    connect(netManager, &QNetworkAccessManager::sslErrors, this, &PaymentServer::reportSslErrors);
 }
 
 void PaymentServer::uiReady()
@@ -387,8 +384,7 @@ void PaymentServer::handleURIOrFile(const QString& s)
         {
             SendCoinsRecipient recipient;
             if (GUIUtil::parseBitcoinURI(s, &recipient)) {
-                CBitcoinAddress address(recipient.address.toStdString());
-                if (!address.IsValid()) {
+                if (!IsValidDestinationString(recipient.address.toStdString(), false, Params())) {
                     Q_EMIT message(tr("URI handling"), tr("Invalid payment address %1").arg(recipient.address),
                         CClientUIInterface::MSG_ERROR);
                 } else
@@ -424,8 +420,7 @@ void PaymentServer::handleURIConnection()
     while (clientConnection->bytesAvailable() < (int)sizeof(quint32))
         clientConnection->waitForReadyRead();
 
-    connect(clientConnection, SIGNAL(disconnected()),
-        clientConnection, SLOT(deleteLater()));
+    connect(clientConnection, &QLocalSocket::disconnected, clientConnection, &QLocalSocket::deleteLater);
 
     QDataStream in(clientConnection);
     in.setVersion(QDataStream::Qt_4_0);
@@ -508,7 +503,7 @@ bool PaymentServer::processPaymentRequest(PaymentRequestPlus& request, SendCoins
         CTxDestination dest;
         if (ExtractDestination(sendingTo.first, dest)) {
             // Append destination address
-            addresses.append(QString::fromStdString(CBitcoinAddress(dest).ToString()));
+            addresses.append(QString::fromStdString(EncodeDestination(dest)));
         } else if (!recipient.authenticatedMerchant.isEmpty()) {
             // Insecure payments to custom eros addresses are not supported
             // (there is no good way to tell the user where they are paying in a way

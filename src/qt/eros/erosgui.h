@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -20,7 +21,6 @@
 #include "qt/eros/send.h"
 #include "qt/eros/receivewidget.h"
 #include "qt/eros/addresseswidget.h"
-#include "qt/eros/privacywidget.h"
 #include "qt/eros/coldstakingwidget.h"
 #include "qt/eros/masternodeswidget.h"
 #include "qt/eros/snackbar.h"
@@ -66,10 +66,11 @@ public Q_SLOTS:
     void goToSend();
     void goToReceive();
     void goToAddresses();
-    void goToPrivacy();
     void goToMasterNodes();
     void goToColdStaking();
     void goToSettings();
+    void goToSettingsInfo();
+    void openNetworkMonitor();
 
     void connectActions();
 
@@ -130,7 +131,6 @@ private:
     SendWidget *sendWidget = nullptr;
     ReceiveWidget *receiveWidget = nullptr;
     AddressesWidget *addressesWidget = nullptr;
-    PrivacyWidget *privacyWidget = nullptr;
     MasterNodesWidget *masterNodesWidget = nullptr;
     ColdStakingWidget *coldStakingWidget = nullptr;
     SettingsWidget* settingsWidget = nullptr;
@@ -162,6 +162,10 @@ private:
     /** Disconnect core signals from GUI client */
     void unsubscribeFromCoreSignals();
 
+public Q_SLOTS:
+    /** called by a timer to check if fRequestShutdown has been set **/
+    void detectShutdown();
+
 private Q_SLOTS:
     /** Show window if hidden, unminimize when minimized, rise when obscured or show if hidden and fToggleHidden is true */
     void showNormalIfMinimized(bool fToggleHidden = false);
@@ -169,12 +173,12 @@ private Q_SLOTS:
     /** Simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
 
-    /** called by a timer to check if fRequestShutdown has been set **/
-    void detectShutdown();
-
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+#else
+    /** Handle macOS Dock icon clicked */
+     void macosDockIconActivated();
 #endif
 
 Q_SIGNALS:

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -8,6 +9,7 @@
 #include <QWidget>
 #include "qt/eros/pwidget.h"
 #include "qt/eros/settings/settingsbackupwallet.h"
+#include "qt/eros/settings/settingsexportcsv.h"
 #include "qt/eros/settings/settingsbittoolwidget.h"
 #include "qt/eros/settings/settingssignmessagewidgets.h"
 #include "qt/eros/settings/settingswalletrepairwidget.h"
@@ -40,6 +42,8 @@ public:
     void loadWalletModel() override;
     void setMapper();
     void showDebugConsole();
+    void showInformation();
+    void openNetworkMonitor();
 
 Q_SIGNALS:
     /** Get restart command-line parameters and handle restart */
@@ -55,6 +59,7 @@ private Q_SLOTS:
     void onConfigurationClicked();
     void onBipToolClicked();
     void onMultisendClicked();
+    void onExportCSVClicked();
 
     // Options
     void onOptionsClicked();
@@ -73,13 +78,15 @@ private Q_SLOTS:
     // Help
     void onHelpClicked();
     void onAboutClicked();
-
     void onResetAction();
     void onSaveOptionsClicked();
+
 private:
     Ui::SettingsWidget *ui;
+    int navAreaBaseHeight{0};
 
     SettingsBackupWallet *settingsBackupWallet;
+    SettingsExportCSV *settingsExportCsvWidget;
     SettingsBitToolWidget *settingsBitToolWidget;
     SettingsSignMessageWidgets *settingsSingMessageWidgets;
     SettingsWalletRepairWidget *settingsWalletRepairWidget;
@@ -93,9 +100,12 @@ private:
     QDataWidgetMapper* mapper;
 
     QList<QPushButton*> options;
+    // Map of: menu button -> sub menu items
+    QMap <QPushButton*, QWidget*> menus;
 
     void selectOption(QPushButton* option);
-    bool openStandardDialog(QString title = "", QString body = "", QString okBtn = "OK", QString cancelBtn = "");
+    bool openStandardDialog(const QString& title = "", const QString& body = "", const QString& okBtn = "OK", const QString& cancelBtn = "");
+    void selectMenu(QPushButton* btn);
 };
 
 #endif // SETTINGSWIDGET_H

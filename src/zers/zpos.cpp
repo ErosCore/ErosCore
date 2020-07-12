@@ -1,8 +1,10 @@
-// Copyright (c) 2017-2019 The EROS developers
+// Copyright (c) 2017-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "zers/zpos.h"
+#include "zerschain.h"
 
 
 /*
@@ -11,6 +13,34 @@
  * Return block index pointer or nullptr if not found
  */
 
+uint32_t ParseAccChecksum(uint256 nCheckpoint, const libzerocoin::CoinDenomination denom)
+{
+    int pos = std::distance(libzerocoin::zerocoinDenomList.begin(),
+            find(libzerocoin::zerocoinDenomList.begin(), libzerocoin::zerocoinDenomList.end(), denom));
+    nCheckpoint = nCheckpoint >> (32*((libzerocoin::zerocoinDenomList.size() - 1) - pos));
+    return nCheckpoint.Get32();
+}
+
+bool CLegacyZErsStake::InitFromTxIn(const CTxIn& txin)
+{
+    // Construct the stakeinput object
+    if (!txin.IsZerocoinSpend())
+        return error("%s: unable to initialize CLegacyZErsStake from non zc-spend", __func__);
+
+    // Check spend type
+    libzerocoin::CoinSpend spend = TxInToZerocoinSpend(txin);
+    if (spend.getSpendType() != libzerocoin::SpendType::STAKE)
+        return error("%s : spend is using the wrong SpendType (%d)", __func__, (int)spend.getSpendType());
+
+    *this = CLegacyZErsStake(spend);
+
+    // Find the pindex with the accumulator checksum
+    if (!GetIndexFrom())
+        return error("%s : Failed to find the block index for zers stake origin", __func__);
+
+    // All good
+    return true;
+}
 
 CLegacyZErsStake::CLegacyZErsStake(const libzerocoin::CoinSpend& spend)
 {
@@ -29,10 +59,10 @@ CBlockIndex* CLegacyZErsStake::GetIndexFrom()
     }
 
     // Not found. Scan the chain.
-    CBlockIndex* pindex = chainActive[Params().Zerocoin_StartHeight()];
+    const Consensus::Params& consensus = Params().GetConsensus();
+    CBlockIndex* pindex = chainActive[consensus.vUpgrades[Consensus::UPGRADE_ZC].nActivationHeight];
     if (!pindex) return nullptr;
-    const int last_block = Params().Zerocoin_Block_Last_Checkpoint();
-    while (pindex && pindex->nHeight <= last_block) {
+    while (pindex && pindex->nHeight <= consensus.height_last_ZC_AccumCheckpoint) {
         if (ParseAccChecksum(pindex->nAccumulatorCheckpoint, denom) == nChecksum) {
             // Found. Save to database and return
             zerocoinDB->WriteAccChecksum(nChecksum, denom, pindex->nHeight);
@@ -58,4 +88,21 @@ CDataStream CLegacyZErsStake::GetUniqueness() const
     CDataStream ss(SER_GETHASH, 0);
     ss << hashSerial;
     return ss;
+}
+
+// Verify stake contextual checks
+bool CLegacyZErsStake::ContextCheck(int nHeight, uint32_t nTime)
+{
+    const Consensus::Params& consensus = Params().GetConsensus();
+    if (!consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_ZC_V2) || nHeight >= consensus.height_last_ZC_AccumCheckpoint)
+        return error("%s : zERS stake block: height %d outside range", __func__, nHeight);
+
+    // The checkpoint needs to be from 200 blocks ago
+    const int cpHeight = nHeight - 1 - consensus.ZC_MinStakeDepth;
+    const libzerocoin::CoinDenomination denom = libzerocoin::AmountToZerocoinDenomination(GetValue());
+    if (ParseAccChecksum(chainActive[cpHeight]->nAccumulatorCheckpoint, denom) != GetChecksum())
+        return error("%s : accum. checksum at height %d is wrong.", __func__, nHeight);
+
+    // All good
+    return true;
 }

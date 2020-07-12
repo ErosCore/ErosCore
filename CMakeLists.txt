@@ -1,4 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
+
+# Search for and use ccache if available to speed up build times
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    message(STATUS "Found ccache: ${CCACHE_PROGRAM}")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+    # Set up wrapper scripts
+    set(C_LAUNCHER   "${CCACHE_PROGRAM}")
+    set(CXX_LAUNCHER "${CCACHE_PROGRAM}")
+endif()
+
 project(EROS)
 
 set(BDB_VER "4.8.30")
@@ -15,11 +26,11 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     message(STATUS "Compiling on macOS")
     set(ENV{target} "Mac")
     list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt5)
-    list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/openssl)
+    list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/openssl@1.1)
     list(APPEND CMAKE_PREFIX_PATH /usr/local/Cellar/berkeley-db@4)
-    set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl/")
-    set(ENV{CPPFLAGS} "-I${OPENSSL_ROOT_DIR}/include")
-    set(ENV{LDFLAGS} "-L${OPENSSL_ROOT_DIR}/lib")
+    #set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl@1.1/")
+    #set(ENV{CPPFLAGS} "-I${OPENSSL_ROOT_DIR}/include")
+    #set(ENV{LDFLAGS} "-L${OPENSSL_ROOT_DIR}/lib")
     set(BerkeleyDB_ROOT_DIR "/usr/local/Cellar/berkeley-db@4/${BDB_VER}/")
     set(Boost_USE_MULTITHREADED ON)
     set(Boost_NO_BOOST_CMAKE ON)
@@ -259,6 +270,8 @@ file(GLOB ZMQ_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/zmq/*.h)
 file(GLOB SCRIPT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/script/*.h)
 file(GLOB RPC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/rpc/*.h)
 file(GLOB COMPAT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/compat/*.h)
+file(GLOB CONSENSUS_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/consensus/*.h)
+file(GLOB CTAES_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/crypto/ctaes/*.h)
 
 source_group("BitcoinHeaders" FILES
         ${HEADERS}
@@ -268,12 +281,13 @@ source_group("BitcoinHeaders" FILES
         ${SCRIPT_HEADERS}
         ${RPC_HEADERS}
         ${COMPAT_HEADERS}
+        ${CONSENSUS_HEADERS}
+        ${CTAES_HEADERS}
         ./src/support/cleanse.h
         )
 
 set(SERVER_SOURCES
         ./src/addrman.cpp
-        ./src/alert.cpp
         ./src/bloom.cpp
         ./src/blocksignature.cpp
         ./src/chain.cpp
@@ -281,12 +295,14 @@ set(SERVER_SOURCES
         ./src/httprpc.cpp
         ./src/httpserver.cpp
         ./src/init.cpp
-        ./src/leveldbwrapper.cpp
+        ./src/dbwrapper.cpp
         ./src/main.cpp
         ./src/merkleblock.cpp
         ./src/miner.cpp
         ./src/net.cpp
         ./src/noui.cpp
+        ./src/policy/fees.cpp
+        ./src/policy/policy.cpp
         ./src/pow.cpp
         ./src/rest.cpp
         ./src/rpc/blockchain.cpp
@@ -332,8 +348,6 @@ set(WALLET_SOURCES
         ./src/activemasternode.cpp
         ./src/bip38.cpp
         ./src/denomination_functions.cpp
-        ./src/obfuscation.cpp
-        ./src/obfuscation-relay.cpp
         ./src/wallet/db.cpp
         ./src/addressbook.cpp
         ./src/crypter.cpp
@@ -346,11 +360,14 @@ set(WALLET_SOURCES
         ./src/masternodeman.cpp
         ./src/messagesigner.cpp
         ./src/zers/mintpool.cpp
+        ./src/wallet/hdchain.cpp
         ./src/wallet/rpcdump.cpp
         ./src/zers/deterministicmint.cpp
         ./src/zers/zerocoin.cpp
+        ./src/wallet/scriptpubkeyman.cpp
         ./src/wallet/rpcwallet.cpp
         ./src/kernel.cpp
+        ./src/legacy/stakemodifier.cpp
         ./src/wallet/wallet.cpp
         ./src/wallet/wallet_zerocoin.cpp
         ./src/wallet/wallet_ismine.cpp
@@ -371,6 +388,7 @@ target_include_directories(WALLET_A PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
         )
 
 set(BITCOIN_CRYPTO_SOURCES
+        ./src/crypto/aes.cpp
         ./src/crypto/sha1.cpp
         ./src/crypto/sha256.cpp
         ./src/crypto/sha512.cpp
@@ -444,11 +462,15 @@ set(COMMON_SOURCES
         ./src/amount.cpp
         ./src/base58.cpp
         ./src/bip38.cpp
+        ./src/consensus/params.cpp
+        ./src/consensus/upgrades.cpp
         ./src/chainparams.cpp
         ./src/coins.cpp
+        ./src/key_io.cpp
         ./src/compressor.cpp
         ./src/consensus/merkle.cpp
         ./src/consensus/tx_verify.cpp
+        ./src/consensus/zerocoin_verify.cpp
         ./src/primitives/block.cpp
         ./src/zers/deterministicmint.cpp
         ./src/primitives/transaction.cpp
@@ -459,6 +481,7 @@ set(COMMON_SOURCES
         ./src/invalid.cpp
         ./src/key.cpp
         ./src/keystore.cpp
+        ./src/netaddress.cpp
         ./src/netbase.cpp
         ./src/protocol.cpp
         ./src/pubkey.cpp
@@ -487,10 +510,15 @@ set(UTIL_SOURCES
         ./src/compat/glibcxx_sanity.cpp
         ./src/chainparamsbase.cpp
         ./src/clientversion.cpp
+        ./src/fs.cpp
+        ./src/logging.cpp
         ./src/random.cpp
         ./src/rpc/protocol.cpp
         ./src/sync.cpp
+        ./src/blob_uint256.cpp
+        ./src/arith_uint256.cpp
         ./src/uint256.cpp
+        ./src/util/threadnames.cpp
         ./src/util.cpp
         ./src/utilstrencodings.cpp
         ./src/utilmoneystr.cpp

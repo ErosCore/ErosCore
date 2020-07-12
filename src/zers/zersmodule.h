@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -47,14 +48,15 @@ public:
     CBigNum randomness;
     libzerocoin::CoinRandomnessSchnorrSignature schnorrSig;
     // prev out values
-    uint256 txHash = 0;
+    uint256 txHash;
     unsigned int outputIndex = -1;
     libzerocoin::PublicCoin pubCoin;
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
+
         READWRITE(version);
 
         if (version < PUBSPEND_SCHNORR) {

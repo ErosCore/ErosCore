@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 
+set(QT_MINIMUM_VERSION 5.5.1)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms ${CMAKE_CURRENT_SOURCE_DIR}/eros/forms ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/forms)
 set(CMAKE_AUTOMOC ON)
@@ -10,18 +11,12 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif ()
 
-find_package(Qrcode)
-if (QRCODE_FOUND)
-    include_directories ( ${QRCODE_INCLUDE_DIR} )
-    link_directories ( ${QRCODE_LIBRARY_DIRS} )
-endif()
-
 unset(Qt5Enables)
-Q_FOREACH(comp Widgets Core Gui Network LinguistTools DBus Svg Charts)
+foreach(comp Widgets Core Gui Network LinguistTools DBus Svg Charts)
     find_package(Qt5${comp})
     set(Qt5Enables "${Qt5Enables};Qt5${comp}_FOUND")
     if(Qt5${comp}_FOUND)
-        MESSAGE(STATUS "FOUND QT5${comp}")
+        MESSAGE(STATUS "FOUND Qt5${comp}")
         include_directories(${include_directories} ${Qt5${comp}_INCLUDE_DIRS} ${QT_USE_FILE})
         add_definitions(${Qt5${comp}_DEFINITIONS})
         list(APPEND Qt5_LIBRARIES ${Qt5${comp}_LIBRARIES})
@@ -30,12 +25,28 @@ Q_FOREACH(comp Widgets Core Gui Network LinguistTools DBus Svg Charts)
     endif()
 endforeach(comp)
 
+if (Qt5Core_FOUND)
+    if (Qt5Core_VERSION VERSION_LESS QT_MINIMUM_VERSION)
+        MESSAGE(FATAL_ERROR "Minimum supported Qt5 version is ${QT_MINIMUM_VERSION}")
+    else()
+        MESSAGE(STATUS "Found Qt5 version: ${Qt5Core_VERSION}")
+    endif()
+else()
+    MESSAGE(FATAL_ERROR "Could not find any Qt5 installation")
+endif()
+
 if (Qt5DBus_FOUND)
     add_compile_options("-DUSE_DBUS")
 endif()
 
 if (Qt5Charts_FOUND)
     add_compile_options("-DUSE_QTCHARTS")
+endif()
+
+find_package(Qrcode)
+if (QRCODE_FOUND)
+    include_directories ( ${QRCODE_INCLUDE_DIR} )
+    link_directories ( ${QRCODE_LIBRARY_DIRS} )
 endif()
 
 find_program(MOC_BIN NAMES moc moc-qt5 qt5-moc
@@ -68,13 +79,10 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/paymentr
 
 SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/bantablemodel.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/blockexplorer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/bitcoinaddressvalidator.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/bitcoinamountfield.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/bitcoinunits.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/clientmodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/csvmodelwriter.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/governancepage.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/guiutil.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/intro.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/networkstyle.cpp
@@ -93,9 +101,7 @@ SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/addresstablemodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/askpassphrasedialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/coincontroldialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/zerscontroldialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/coincontroltreewidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/proposalframe.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/editaddressdialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/openuridialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/paymentrequestplus.cpp
@@ -107,10 +113,10 @@ SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/transactiontablemodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/walletmodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/walletmodeltransaction.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/zerscontroldialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/erosgui.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/loadingdialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/pwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/eros/focuseddialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/guitransactionsutils.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/snackbar.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/navmenuwidget.cpp
@@ -120,12 +126,10 @@ SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/txviewholder.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/qtutils.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/expandablebutton.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/eros/walletpassworddialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/topbar.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/txrow.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/addressfilterproxymodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/dashboardwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/eros/coincontrolerswidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/addresslabelrow.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/contactdropdownrow.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/contactsdropdown.cpp
@@ -152,8 +156,6 @@ SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/tooltipmenu.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/addresseswidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/defaultdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/eros/denomgenerationdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/eros/privacywidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/coldstakingwidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingsbackupwallet.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingsbittoolwidget.cpp
@@ -167,6 +169,7 @@ SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingssignmessagewidgets.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingswalletoptionswidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingswalletrepairwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingsexportcsv.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/settings/settingswidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/welcomecontentwidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/eros/splash.cpp

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -21,13 +22,11 @@ public:
     ~SettingsBackupWallet();
 
 private Q_SLOTS:
-    void backupWallet();
     void selectFileOutput();
     void changePassphrase();
 
 private:
     Ui::SettingsBackupWallet *ui;
-    QString filename;
 };
 
 #endif // SETTINGSBACKUPWALLET_H

@@ -1,11 +1,13 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2020 The EROS developers
+// Copyright (c) 2015-2019 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "clientversion.h"
+#include "fs.h"
 #include "init.h"
 #include "main.h"
 #include "masternodeconfig.h"
@@ -17,7 +19,6 @@
 #include "httprpc.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 
 #include <stdio.h>
@@ -83,7 +84,7 @@ bool AppInit(int argc, char* argv[])
     }
 
     try {
-        if (!boost::filesystem::is_directory(GetDataDir(false))) {
+        if (!fs::is_directory(GetDataDir(false))) {
             fprintf(stderr, "Error: Specified data directory \"%s\" does not exist.\n", mapArgs["-datadir"].c_str());
             return false;
         }
@@ -140,6 +141,9 @@ bool AppInit(int argc, char* argv[])
 #endif
         SoftSetBoolArg("-server", true);
 
+        // Set this early so that parameter interactions go to console
+        InitLogging();
+        InitParameterInteraction();
         fRet = AppInit2();
     } catch (const std::exception& e) {
         PrintExceptionContinue(&e, "AppInit()");

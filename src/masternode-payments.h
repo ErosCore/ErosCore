@@ -11,9 +11,9 @@
 #include "masternode.h"
 
 
-extern CCriticalSection cs_vecPayments;
-extern CCriticalSection cs_mapMasternodeBlocks;
-extern CCriticalSection cs_mapMasternodePayeeVotes;
+extern RecursiveMutex cs_vecPayments;
+extern RecursiveMutex cs_mapMasternodeBlocks;
+extern RecursiveMutex cs_mapMasternodePayeeVotes;
 
 class CMasternodePayments;
 class CMasternodePaymentWinner;
@@ -37,7 +37,7 @@ void DumpMasternodePayments();
 class CMasternodePaymentDB
 {
 private:
-    boost::filesystem::path pathDB;
+    fs::path pathDB;
     std::string strMagicMessage;
 
 public:
@@ -77,9 +77,9 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
-        READWRITE(scriptPubKey);
+        READWRITE(*(CScriptBase*)(&scriptPubKey));
         READWRITE(nVotes);
     }
 };
@@ -149,7 +149,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(nBlockHeight);
         READWRITE(vecPayments);
@@ -196,11 +196,11 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(vinMasternode);
         READWRITE(nBlockHeight);
-        READWRITE(payee);
+        READWRITE(*(CScriptBase*)(&payee));
         READWRITE(vchSig);
         try
         {
@@ -215,7 +215,7 @@ public:
         std::string ret = "";
         ret += vinMasternode.ToString();
         ret += ", " + std::to_string(nBlockHeight);
-        ret += ", " + payee.ToString();
+        ret += ", " + HexStr(payee);
         ret += ", " + std::to_string((int)vchSig.size());
         return ret;
     }
@@ -235,7 +235,7 @@ private:
 public:
     std::map<uint256, CMasternodePaymentWinner> mapMasternodePayeeVotes;
     std::map<int, CMasternodeBlockPayees> mapMasternodeBlocks;
-    std::map<uint256, int> mapMasternodesLastVote; //prevout.hash + prevout.n, nBlockHeight
+    std::map<COutPoint, int> mapMasternodesLastVote; //prevout, nBlockHeight
 
     CMasternodePayments()
     {
@@ -265,14 +265,14 @@ public:
     {
         LOCK(cs_mapMasternodePayeeVotes);
 
-        if (mapMasternodesLastVote.count(outMasternode.hash + outMasternode.n)) {
-            if (mapMasternodesLastVote[outMasternode.hash + outMasternode.n] == nBlockHeight) {
+        if (mapMasternodesLastVote.count(outMasternode)) {
+            if (mapMasternodesLastVote[outMasternode] == nBlockHeight) {
                 return false;
             }
         }
 
         //record this masternode voted
-        mapMasternodesLastVote[outMasternode.hash + outMasternode.n] = nBlockHeight;
+        mapMasternodesLastVote[outMasternode] = nBlockHeight;
         return true;
     }
 
@@ -287,7 +287,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(mapMasternodePayeeVotes);
         READWRITE(mapMasternodeBlocks);

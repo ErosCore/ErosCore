@@ -1,5 +1,6 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2020 The EROS developers
+// Copyright (c) 2017-2019 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -44,8 +45,6 @@ public:
         ToggleLock,     /** Toggle wallet lock state */
         ChangePass,     /** Change passphrase */
         Send_ERS,       /** Send ERS */
-        Send_zERS,      /** Send zERS */
-        Mint_zERS,      /** Mint zERS */
         BIP_38,         /** BIP38 menu */
         Multi_Sig,      /** Multi-Signature dialog */
         Sign_Message,   /** Sign/verify message dialog */
@@ -66,6 +65,7 @@ private:
     bool fCapsLock;
     SecureString newpassCache = "";
 
+    void updateWarningsLabel();
     void run(int type) override;
     void onError(QString error, int type) override;
     QCheckBox *btnWatch;

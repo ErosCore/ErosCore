@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -32,7 +33,6 @@ public Q_SLOTS:
 private Q_SLOTS:
     void onSendClicked();
     void onDashboardClicked();
-    void onPrivacyClicked();
     void onAddressClicked();
     void onMasterNodesClicked();
     void onColdStakingClicked();

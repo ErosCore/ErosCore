@@ -1,3 +1,4 @@
+// Copyright (c) 2019 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -32,7 +33,7 @@ SettingsMultisendDialog::SettingsMultisendDialog(QWidget *parent) :
     initCssEditLine(ui->lineEditLabel, true);
 
     // Address
-    ui->labelSubtitleAddress->setText("Enter EROS address or contact label");
+    ui->labelSubtitleAddress->setText("EROS address or contact label");
     setCssProperty(ui->labelSubtitleAddress, "text-title2-dialog");
     ui->lineEditAddress->setPlaceholderText("Enter address");
     initCssEditLine(ui->lineEditAddress, true);
@@ -51,8 +52,8 @@ SettingsMultisendDialog::SettingsMultisendDialog(QWidget *parent) :
     ui->btnSave->setText("ADD");
     setCssBtnPrimary(ui->btnSave);
 
-    connect(ui->btnEsc, SIGNAL(clicked()), this, SLOT(close()));
-    connect(ui->btnCancel, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui->btnEsc, &QPushButton::clicked, this, &SettingsMultisendDialog::close);
+    connect(ui->btnCancel, &QPushButton::clicked, this, &SettingsMultisendDialog::close);
     connect(ui->btnSave, &QPushButton::clicked, [this](){
         this->isOk = true;
         accept();

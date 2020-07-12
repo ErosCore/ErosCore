@@ -1,3 +1,4 @@
+// Copyright (c) 2019 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -6,6 +7,8 @@
 #define SETTINGSFAQWIDGET_H
 
 #include <QDialog>
+
+class EROSGUI;
 
 namespace Ui {
 class SettingsFaqWidget;
@@ -16,7 +19,7 @@ class SettingsFaqWidget : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsFaqWidget(QWidget *parent = nullptr);
+    explicit SettingsFaqWidget(EROSGUI *parent = nullptr);
     ~SettingsFaqWidget();
 
     void showEvent(QShowEvent *event) override;
@@ -25,16 +28,7 @@ public Q_SLOTS:
    void windowResizeEvent(QResizeEvent* event);
    void setSection(int num);
 private Q_SLOTS:
-    void onFaq1Clicked();
-    void onFaq2Clicked();
-    void onFaq3Clicked();
-    void onFaq4Clicked();
-    void onFaq5Clicked();
-    void onFaq6Clicked();
-    void onFaq7Clicked();
-    void onFaq8Clicked();
-    void onFaq9Clicked();
-    void onFaq10Clicked();
+    void onFaqClicked(const QWidget* const widget);
 private:
     Ui::SettingsFaqWidget *ui;
     int pos = 0;

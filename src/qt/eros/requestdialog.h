@@ -1,3 +1,4 @@
+// Copyright (c) 2019 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -5,10 +6,11 @@
 #ifndef REQUESTDIALOG_H
 #define REQUESTDIALOG_H
 
-#include <QDialog>
-#include <QPixmap>
-#include "walletmodel.h"
+#include "qt/eros/focuseddialog.h"
 #include "qt/eros/snackbar.h"
+#include "walletmodel.h"
+
+#include <QPixmap>
 
 class WalletModel;
 class EROSGUI;
@@ -17,7 +19,7 @@ namespace Ui {
 class RequestDialog;
 }
 
-class RequestDialog : public QDialog
+class RequestDialog : public FocusedDialog
 {
     Q_OBJECT
 
@@ -31,7 +33,7 @@ public:
     int res = -1;
 
 private Q_SLOTS:
-    void onNextClicked();
+    void accept() override;
     void onCopyClicked();
     void onCopyUriClicked();
 

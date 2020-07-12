@@ -1,3 +1,4 @@
+// Copyright (c) 2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -6,6 +7,7 @@
 
 #include "init.h"
 #include "coincontrol.h"
+#include "consensus/zerocoin_verify.h"
 #include "denomination_functions.h"
 #include "primitives/transaction.h"
 #include "script/sign.h"
@@ -17,6 +19,81 @@
 /*
  * Legacy Zerocoin Wallet
  */
+
+bool CWallet::AddDeterministicSeed(const uint256& seed)
+{
+    CWalletDB db(strWalletFile);
+    std::string strErr;
+    uint256 hashSeed = Hash(seed.begin(), seed.end());
+
+    if(IsCrypted()) {
+        if (!IsLocked()) { //if we have password
+
+            CKeyingMaterial kmSeed(seed.begin(), seed.end());
+            std::vector<unsigned char> vchSeedSecret;
+
+
+            //attempt encrypt
+            if (EncryptSecret(vMasterKey, kmSeed, hashSeed, vchSeedSecret)) {
+                //write to wallet with hashSeed as unique key
+                if (db.WriteZERSSeed(hashSeed, vchSeedSecret)) {
+                    return true;
+                }
+            }
+            strErr = "encrypt seed";
+        }
+        strErr = "save since wallet is locked";
+    } else { //wallet not encrypted
+        if (db.WriteZERSSeed(hashSeed, ToByteVector(seed))) {
+            return true;
+        }
+        strErr = "save zersseed to wallet";
+    }
+    //the use case for this is no password set seed, mint dzPIV,
+
+    return error("s%: Failed to %s\n", __func__, strErr);
+}
+
+bool CWallet::GetDeterministicSeed(const uint256& hashSeed, uint256& seedOut)
+{
+
+    CWalletDB db(strWalletFile);
+    std::string strErr;
+    if (IsCrypted()) {
+        if(!IsLocked()) { //if we have password
+
+            std::vector<unsigned char> vchCryptedSeed;
+            //read encrypted seed
+            if (db.ReadZERSSeed(hashSeed, vchCryptedSeed)) {
+                uint256 seedRetrieved = uint256S(ReverseEndianString(HexStr(vchCryptedSeed)));
+                //this checks if the hash of the seed we just read matches the hash given, meaning it is not encrypted
+                //the use case for this is when not crypted, seed is set, then password set, the seed not yet crypted in memory
+                if(hashSeed == Hash(seedRetrieved.begin(), seedRetrieved.end())) {
+                    seedOut = seedRetrieved;
+                    return true;
+                }
+
+                CKeyingMaterial kmSeed;
+                //attempt decrypt
+                if (DecryptSecret(vMasterKey, vchCryptedSeed, hashSeed, kmSeed)) {
+                    seedOut = uint256S(ReverseEndianString(HexStr(kmSeed)));
+                    return true;
+                }
+                strErr = "decrypt seed";
+            } else { strErr = "read seed from wallet"; }
+        } else { strErr = "read seed; wallet is locked"; }
+    } else {
+        std::vector<unsigned char> vchSeed;
+        // wallet not crypted
+        if (db.ReadZERSSeed(hashSeed, vchSeed)) {
+            seedOut = uint256S(ReverseEndianString(HexStr(vchSeed)));
+            return true;
+        }
+        strErr = "read seed from wallet";
+    }
+
+    return error("%s: Failed to %s\n", __func__, strErr);
+}
 
 //- ZC Mints (Only for regtest)
 
@@ -30,8 +107,9 @@ std::string CWallet::MintZerocoin(CAmount nValue, CWalletTx& wtxNew, std::vector
         return _("Invalid amount");
 
     CAmount nBalance = GetBalance();
-    if (nValue + Params().Zerocoin_MintFee() > nBalance) {
-        LogPrintf("%s: balance=%s fee=%s nValue=%s\n", __func__, FormatMoney(nBalance), FormatMoney(Params().Zerocoin_MintFee()), FormatMoney(nValue));
+    const CAmount& nFee = Params().GetConsensus().ZC_MinMintFee;
+    if (nValue + nFee > nBalance) {
+        LogPrintf("%s: balance=%s fee=%s nValue=%s\n", __func__, FormatMoney(nBalance), FormatMoney(nFee), FormatMoney(nValue));
         return _("Insufficient funds");
     }
 
@@ -59,11 +137,12 @@ std::string CWallet::MintZerocoin(CAmount nValue, CWalletTx& wtxNew, std::vector
     }
 
     //commit the transaction to the network
-    if (!CommitTransaction(wtxNew, reservekey)) {
-        return _("Error: The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.");
+    const CWallet::CommitResult& res = CommitTransaction(wtxNew, reservekey);
+    if (res.status != CWallet::CommitStatus::OK) {
+        return res.ToString();
     } else {
         //update mints with full transaction hash and then database them
-        CWalletDB walletdb(pwalletMain->strWalletFile);
+        CWalletDB walletdb(strWalletFile);
         for (CDeterministicMint dMint : vDMints) {
             dMint.SetTxHash(wtxNew.GetHash());
             zersTracker->Add(dMint, true);
@@ -92,7 +171,7 @@ std::string CWallet::MintZerocoinFromOutPoint(CAmount nValue, CWalletTx& wtxNew,
 bool CWallet::CreateZERSOutPut(libzerocoin::CoinDenomination denomination, CTxOut& outMint, CDeterministicMint& dMint)
 {
     // mint a new coin (create Pedersen Commitment) and extract PublicCoin that is shareable from it
-    libzerocoin::PrivateCoin coin(Params().Zerocoin_Params(false), denomination, false);
+    libzerocoin::PrivateCoin coin(Params().GetConsensus().Zerocoin_Params(false), denomination, false);
     zwalletMain->GenerateDeterministicZERS(denomination, coin, dMint);
 
     libzerocoin::PublicCoin pubCoin = coin.getPublicCoin();
@@ -166,17 +245,17 @@ bool CWallet::CreateZerocoinMintTransaction(const CAmount nValue,
         txNew.vout.push_back(outMint);
 
         //store as CZerocoinMint for later use
-        LogPrint("zero", "%s: new mint %s\n", __func__, dMint.ToString());
+        LogPrint(BCLog::LEGACYZC, "%s: new mint %s\n", __func__, dMint.ToString());
         vDMints.emplace_back(dMint);
     }
 
     // calculate fee
-    CAmount nTotalValue = nValue + Params().Zerocoin_MintFee() * txNew.vout.size();
+    CAmount nTotalValue = nValue + Params().GetConsensus().ZC_MinMintFee * txNew.vout.size();
 
     CAmount nValueIn = 0;
     std::set<std::pair<const CWalletTx*, unsigned int> > setCoins;
     // select UTXO's to use
-    if (!SelectCoins(nTotalValue, setCoins, nValueIn, coinControl)) {
+    if (!SelectCoinsToSpend(nTotalValue, setCoins, nValueIn, coinControl)) {
         strFailReason = _("Insufficient or insufficient confirmed funds, you might need to wait a few minutes and try again.");
         return false;
     }
@@ -215,7 +294,7 @@ bool CWallet::CreateZerocoinMintTransaction(const CAmount nValue,
 // - ZC PublicSpends
 
 bool CWallet::SpendZerocoin(CAmount nAmount, CWalletTx& wtxNew, CZerocoinSpendReceipt& receipt, std::vector<CZerocoinMint>& vMintsSelected,
-        std::list<std::pair<CBitcoinAddress*,CAmount>> addressesTo, CBitcoinAddress* changeAddress)
+        std::list<std::pair<CTxDestination, CAmount>> addressesTo, CTxDestination* changeAddress)
 {
     // Default: assume something goes wrong. Depending on the problem this gets more specific below
     int nStatus = ZERS_SPEND_ERROR;
@@ -241,8 +320,9 @@ bool CWallet::SpendZerocoin(CAmount nAmount, CWalletTx& wtxNew, CZerocoinSpendRe
     }
 
 
-    CWalletDB walletdb(pwalletMain->strWalletFile);
-    if (!CommitTransaction(wtxNew, reserveKey)) {
+    CWalletDB walletdb(strWalletFile);
+    const CWallet::CommitResult& res = CommitTransaction(wtxNew, reserveKey);
+    if (res.status != CWallet::CommitStatus::OK) {
         LogPrintf("%s: failed to commit\n", __func__);
         nStatus = ZERS_COMMIT_FAILED;
 
@@ -250,7 +330,7 @@ bool CWallet::SpendZerocoin(CAmount nAmount, CWalletTx& wtxNew, CZerocoinSpendRe
         for (CZerocoinMint mint : vMintsSelected) {
             uint256 hashPubcoin = GetPubCoinHash(mint.GetValue());
             zersTracker->SetPubcoinNotUsed(hashPubcoin);
-            pwalletMain->NotifyZerocoinChanged(pwalletMain, mint.GetValue().GetHex(), "New", CT_UPDATED);
+            NotifyZerocoinChanged(this, mint.GetValue().GetHex(), "New", CT_UPDATED);
         }
 
         //erase spends
@@ -335,7 +415,7 @@ bool CWallet::MintsToInputVectorPublicSpend(std::map<CBigNum, CZerocoinMint>& ma
         for (unsigned long i = 0; i < txMint.vout.size(); ++i) {
             CTxOut out = txMint.vout[i];
             if (out.scriptPubKey.IsZerocoinMint()){
-                libzerocoin::PublicCoin pubcoin(Params().Zerocoin_Params(false));
+                libzerocoin::PublicCoin pubcoin(Params().GetConsensus().Zerocoin_Params(false));
                 CValidationState state;
                 if (!TxOutToPublicCoin(out, pubcoin, state))
                     return error("%s: extracting pubcoin from txout failed", __func__);
@@ -359,7 +439,7 @@ bool CWallet::MintsToInputVectorPublicSpend(std::map<CBigNum, CZerocoinMint>& ma
             return false;
         }
         vin.emplace_back(in);
-        receipt.AddSpend(CZerocoinSpend(mint.GetSerialNumber(), 0, mint.GetValue(), mint.GetDenomination(), 0));
+        receipt.AddSpend(CZerocoinSpend(mint.GetSerialNumber(), UINT256_ZERO, mint.GetValue(), mint.GetDenomination(), 0));
     }
 
     receipt.SetStatus(_("Spend Valid"), ZERS_SPEND_OKAY); // Everything okay
@@ -374,8 +454,8 @@ bool CWallet::CreateZCPublicSpendTransaction(
         CZerocoinSpendReceipt& receipt,
         std::vector<CZerocoinMint>& vSelectedMints,
         std::vector<CDeterministicMint>& vNewMints,
-        std::list<std::pair<CBitcoinAddress*,CAmount>> addressesTo,
-        CBitcoinAddress* changeAddress)
+        std::list<std::pair<CTxDestination,CAmount>> addressesTo,
+        CTxDestination * changeAddress)
 {
     // Check available funds
     int nStatus = ZERS_TRX_FUNDS_PROBLEMS;
@@ -393,12 +473,12 @@ bool CWallet::CreateZCPublicSpendTransaction(
     nStatus = ZERS_TRX_CREATE;
 
     // If not already given pre-selected mints, then select mints from the wallet
-    CWalletDB walletdb(pwalletMain->strWalletFile);
+    CWalletDB walletdb(strWalletFile);
     std::set<CMintMeta> setMints;
     CAmount nValueSelected = 0;
     int nCoinsReturned = 0; // Number of coins returned in change from function below (for debug)
     int nNeededSpends = 0;  // Number of spends which would be needed if selection failed
-    const int nMaxSpends = Params().Zerocoin_MaxPublicSpendsPerTransaction(); // Maximum possible spends for one zERS public spend transaction
+    const int nMaxSpends = Params().GetConsensus().ZC_MaxPublicSpendsPerTx; // Maximum possible spends for one zERS public spend transaction
     std::vector<CMintMeta> vMintsToFetch;
     if (vSelectedMints.empty()) {
         //  All of the zERS used in the public coin spend are mature by default (everything is public now.. no need to wait for any accumulation)
@@ -522,17 +602,17 @@ bool CWallet::CreateZCPublicSpendTransaction(
             }
 
             //if there are addresses to send to then use them, if not generate a new address to send to
-            CBitcoinAddress destinationAddr;
+            CTxDestination destinationAddr;
             if (addressesTo.size() == 0) {
                 CPubKey pubkey;
                 assert(reserveKey.GetReservedKey(pubkey)); // should never fail
-                destinationAddr = CBitcoinAddress(pubkey.GetID());
-                addressesTo.push_back(std::make_pair(&destinationAddr, nValue));
+                destinationAddr = pubkey.GetID();
+                addressesTo.push_back(std::make_pair(destinationAddr, nValue));
             }
 
-            for (std::pair<CBitcoinAddress*,CAmount> pair : addressesTo){
-                CScript scriptZerocoinSpend = GetScriptForDestination(pair.first->Get());
-                //add output to ersx address to the transaction (the actual primary spend taking place)
+            for (std::pair<CTxDestination,CAmount> pair : addressesTo){
+                CScript scriptZerocoinSpend = GetScriptForDestination(pair.first);
+                //add output to eros address to the transaction (the actual primary spend taking place)
                 // TODO: check value?
                 CTxOut txOutZerocoinSpend(pair.second, scriptZerocoinSpend);
                 txNew.vout.push_back(txOutZerocoinSpend);
@@ -543,7 +623,7 @@ bool CWallet::CreateZCPublicSpendTransaction(
                 CScript scriptChange;
                 // Change address
                 if(changeAddress){
-                    scriptChange = GetScriptForDestination(changeAddress->Get());
+                    scriptChange = GetScriptForDestination(*changeAddress);
                 } else {
                     // Reserve a new key pair from key pool
                     CPubKey vchPubKey;
@@ -656,7 +736,7 @@ std::map<libzerocoin::CoinDenomination, CAmount> CWallet::GetMyZerocoinDistribut
 void CWallet::setZWallet(CzERSWallet* zwallet)
 {
     zwalletMain = zwallet;
-    zersTracker = std::unique_ptr<CzERSTracker>(new CzERSTracker(strWalletFile));
+    zersTracker = std::unique_ptr<CzERSTracker>(new CzERSTracker(this));
 }
 
 CzERSWallet* CWallet::getZWallet()
@@ -681,7 +761,7 @@ std::string CWallet::ResetMintZerocoin()
 {
     long updates = 0;
     long deletions = 0;
-    CWalletDB walletdb(pwalletMain->strWalletFile);
+    CWalletDB walletdb(strWalletFile);
 
     std::set<CMintMeta> setMints = zersTracker->ListMints(false, false, true);
     std::vector<CMintMeta> vMintsToFind(setMints.begin(), setMints.end());
@@ -713,7 +793,7 @@ std::string CWallet::ResetMintZerocoin()
 std::string CWallet::ResetSpentZerocoin()
 {
     long removed = 0;
-    CWalletDB walletdb(pwalletMain->strWalletFile);
+    CWalletDB walletdb(strWalletFile);
 
     std::set<CMintMeta> setMints = zersTracker->ListMints(false, false, true);
     std::list<CZerocoinSpend> listSpends = walletdb.ListSpentCoins();
@@ -721,14 +801,14 @@ std::string CWallet::ResetSpentZerocoin()
 
     for (CZerocoinSpend spend : listSpends) {
         CTransaction tx;
-        uint256 hashBlock = 0;
+        uint256 hashBlock = UINT256_ZERO;
         if (!GetTransaction(spend.GetTxHash(), tx, hashBlock)) {
             listUnconfirmedSpends.push_back(spend);
             continue;
         }
 
         //no confirmations
-        if (hashBlock == 0)
+        if (hashBlock.IsNull())
             listUnconfirmedSpends.push_back(spend);
     }
 
@@ -769,7 +849,7 @@ bool IsMintInChain(const uint256& hashPubcoin, uint256& txid, int& nHeight)
 
 void CWallet::ReconsiderZerocoins(std::list<CZerocoinMint>& listMintsRestored, std::list<CDeterministicMint>& listDMintsRestored)
 {
-    CWalletDB walletdb(pwalletMain->strWalletFile);
+    CWalletDB walletdb(strWalletFile);
     std::list<CZerocoinMint> listMints = walletdb.ListArchivedZerocoins();
     std::list<CDeterministicMint> listDMints = walletdb.ListArchivedDeterministicMints();
 
@@ -893,4 +973,5 @@ bool CWallet::UpdateMint(const CBigNum& bnValue, const int& nHeight, const uint2
 
     return false;
 }
+
 

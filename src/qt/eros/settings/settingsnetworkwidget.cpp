@@ -1,3 +1,4 @@
+// Copyright (c) 2019 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -25,7 +26,7 @@ SettingsNetworkWidget::SettingsNetworkWidget(EROSGUI* _window, QWidget *parent) 
     setCssBtnPrimary(ui->pushButtonSave);
     setCssBtnSecondary(ui->pushButtonReset);
 
-    connect(ui->pushButtonSave, SIGNAL(clicked()), parent, SLOT(onSaveOptionsClicked()));
+    connect(ui->pushButtonSave, &QPushButton::clicked, [this] { Q_EMIT saveSettings(); });
 }
 
 void SettingsNetworkWidget::setMapper(QDataWidgetMapper *mapper){

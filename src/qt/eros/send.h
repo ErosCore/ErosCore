@@ -14,7 +14,6 @@
 #include "qt/eros/sendcustomfeedialog.h"
 #include "walletmodel.h"
 #include "coincontroldialog.h"
-#include "zerscontroldialog.h"
 #include "qt/eros/tooltipmenu.h"
 
 static const int MAX_SEND_POPUP_ENTRIES = 80;
@@ -57,19 +56,21 @@ public Q_SLOTS:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private Q_SLOTS:
-    void onERSSelected(bool _isERS);
     void onSendClicked();
     void onContactsClicked(SendMultiRow* entry);
     void onMenuClicked(SendMultiRow* entry);
     void onAddEntryClicked();
     void clearEntries();
-    void clearAll();
-    void refreshView();
+    void clearAll(bool fClearSettings = true);
+    void onCheckBoxChanged();
     void onContactMultiClicked();
     void onDeleteClicked();
     void onResetCustomOptions(bool fRefreshAmounts);
+    void onResetSettings();
+
 private:
     Ui::send *ui;
     QPushButton *coinIcon;
@@ -77,6 +78,8 @@ private:
 
     SendCustomFeeDialog* customFeeDialog = nullptr;
     bool isCustomFeeSelected = false;
+    bool fDelegationsChecked = false;
+    CAmount cachedDelegatedBalance{0};
 
     int nDisplayUnit;
     QList<SendMultiRow*> entries;
@@ -87,14 +90,15 @@ private:
     // Current focus entry
     SendMultiRow* focusedEntry = nullptr;
 
-    bool isERS = true;
     void resizeMenu();
     QString recipientsToString(QList<SendCoinsRecipient> recipients);
     SendMultiRow* createEntry();
     bool send(QList<SendCoinsRecipient> recipients);
-    bool sendZers(QList<SendCoinsRecipient> recipients);
+    void setFocusOnLastEntry();
+    void showHideCheckBoxDelegations();
     void updateEntryLabels(QList<SendCoinsRecipient> recipients);
-
+    void setCustomFeeSelected(bool isSelected, const CAmount& customFee = DEFAULT_TRANSACTION_FEE);
+    void setCoinControlPayAmounts();
 };
 
 #endif // SEND_H

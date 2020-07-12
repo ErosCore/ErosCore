@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2016 The Dash developers
-// Copyright (c) 2016-2020 The EROS developers
+// Copyright (c) 2016-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,6 +20,8 @@
 #include "uint256.h"
 #include "util.h"
 #include "wallet/wallet.h"
+
+#include <algorithm>
 
 #include <QColor>
 #include <QDateTime>
@@ -100,7 +103,7 @@ public:
                 // txs are stored in order in the db, which is what should be happening)
                 sort(walletTxes.begin(), walletTxes.end(),
                         [](const CWalletTx & a, const CWalletTx & b) -> bool {
-                         return a.GetComputedTxTime() > b.GetComputedTxTime();
+                         return a.GetTxTime() > b.GetTxTime();
                      });
 
                 // Only latest ones.
@@ -186,9 +189,9 @@ public:
         qDebug() << "TransactionTablePriv::updateWallet : " + QString::fromStdString(hash.ToString()) + " " + QString::number(status);
 
         // Find bounds of this transaction in model
-        QList<TransactionRecord>::iterator lower = qLowerBound(
+        QList<TransactionRecord>::iterator lower = std::lower_bound(
             cachedWallet.begin(), cachedWallet.end(), hash, TxLessThan());
-        QList<TransactionRecord>::iterator upper = qUpperBound(
+        QList<TransactionRecord>::iterator upper = std::upper_bound(
             cachedWallet.begin(), cachedWallet.end(), hash, TxLessThan());
         int lowerIndex = (lower - cachedWallet.begin());
         int upperIndex = (upper - cachedWallet.begin());
@@ -312,7 +315,7 @@ TransactionTableModel::TransactionTableModel(CWallet* wallet, WalletModel* paren
     columns << QString() << QString() << tr("Date") << tr("Type") << tr("Address") << BitcoinUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
     priv->refreshWallet();
 
-    connect(walletModel->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
+    connect(walletModel->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &TransactionTableModel::updateDisplayUnit);
 
     subscribeToCoreSignals();
 }
@@ -445,21 +448,19 @@ QString TransactionTableModel::formatTxType(const TransactionRecord* wtx) const
         return tr("Masternode Reward");
     case TransactionRecord::RecvFromOther:
         return tr("Received from");
-    case TransactionRecord::RecvWithObfuscation:
-        return tr("Received via Obfuscation");
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
         return tr("Sent to");
     case TransactionRecord::SendToSelf:
         return tr("Payment to yourself");
     case TransactionRecord::StakeMint:
-        return tr("ERS Stake");
+        return tr("%1 Stake").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::StakeZERS:
-        return tr("zERS Stake");
+        return tr("z%1 Stake").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::StakeDelegated:
-        return tr("ERS Cold Stake");
+        return tr("%1 Cold Stake").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::StakeHot:
-        return tr("ERS Stake on behalf of");
+        return tr("%1 Stake on behalf of").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::P2CSDelegationSent:
     case TransactionRecord::P2CSDelegationSentOwner:
     case TransactionRecord::P2CSDelegation:
@@ -469,26 +470,16 @@ QString TransactionTableModel::formatTxType(const TransactionRecord* wtx) const
         return tr("Stake delegation spent by");
     case TransactionRecord::Generated:
         return tr("Mined");
-    case TransactionRecord::ObfuscationDenominate:
-        return tr("Obfuscation Denominate");
-    case TransactionRecord::ObfuscationCollateralPayment:
-        return tr("Obfuscation Collateral Payment");
-    case TransactionRecord::ObfuscationMakeCollaterals:
-        return tr("Obfuscation Make Collateral Inputs");
-    case TransactionRecord::ObfuscationCreateDenominations:
-        return tr("Obfuscation Create Denominations");
-    case TransactionRecord::Obfuscated:
-        return tr("Obfuscated");
     case TransactionRecord::ZerocoinMint:
-        return tr("Converted ERS to zERS");
+        return tr("Converted %1 to z%1").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::ZerocoinSpend:
-        return tr("Spent zERS");
+        return tr("Spent z%1").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::RecvFromZerocoinSpend:
-        return tr("Received ERS from zERS");
+        return tr("Received %1 from z%1").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::ZerocoinSpend_Change_zErs:
-        return tr("Minted Change as zERS from zERS Spend");
+        return tr("Minted Change as z%1 from z%1 Spend").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::ZerocoinSpend_FromMe:
-        return tr("Converted zERS to ERS");
+        return tr("Converted z%1 to %1").arg(CURRENCY_UNIT.c_str());
     default:
         return QString();
     }
@@ -502,7 +493,6 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord* wtx
     case TransactionRecord::StakeZERS:
     case TransactionRecord::MNReward:
         return QIcon(":/icons/tx_mined");
-    case TransactionRecord::RecvWithObfuscation:
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
     case TransactionRecord::RecvFromZerocoinSpend:
@@ -529,7 +519,6 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord* wtx, b
         return QString::fromStdString(wtx->address) + watchAddress;
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::MNReward:
-    case TransactionRecord::RecvWithObfuscation:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
     case TransactionRecord::StakeMint:
@@ -537,8 +526,6 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord* wtx, b
     case TransactionRecord::ZerocoinSpend_FromMe:
     case TransactionRecord::RecvFromZerocoinSpend:
         return lookupAddress(wtx->address, tooltip);
-    case TransactionRecord::Obfuscated:
-        return lookupAddress(wtx->address, tooltip) + watchAddress;
     case TransactionRecord::SendToOther:
         return QString::fromStdString(wtx->address) + watchAddress;
     case TransactionRecord::ZerocoinMint:

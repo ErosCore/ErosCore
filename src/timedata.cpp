@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2017 The Bitcoin developers
-// Copyright (c) 2017-2020 The EROS developers
+// Copyright (c) 2017-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,13 +8,13 @@
 
 #include "chainparams.h"
 #include "guiinterface.h"
-#include "netbase.h"
+#include "netaddress.h"
 #include "sync.h"
 #include "util.h"
 #include "utilstrencodings.h"
 
 
-static CCriticalSection cs_nTimeOffset;
+static RecursiveMutex cs_nTimeOffset;
 static int64_t nTimeOffset = 0;
 
 /**
@@ -82,11 +83,24 @@ void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample, int nOffsetLimit)
             LogPrintf("*** %s\n", strMessage);
             uiInterface.ThreadSafeMessageBox(strMessage, "", CClientUIInterface::MSG_ERROR);
         }
-        if (fDebug) {
+        if (!GetBoolArg("-shrinkdebugfile", g_logger->DefaultShrinkDebugFile())) {
             for (int64_t n : vSorted)
                 LogPrintf("%+d  ", n);
             LogPrintf("|  ");
         }
         LogPrintf("nTimeOffset = %+d\n", nTimeOffset);
     }
+}
+
+// Time Protocol V2
+// Timestamp for time protocol V2: slot duration 15 seconds
+int64_t GetTimeSlot(const int64_t nTime)
+{
+    const int slotLen = Params().GetConsensus().nTimeSlotLength;
+    return (nTime / slotLen) * slotLen;
+}
+
+int64_t GetCurrentTimeSlot()
+{
+    return GetTimeSlot(GetAdjustedTime());
 }

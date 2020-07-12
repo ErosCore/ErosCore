@@ -1,4 +1,5 @@
-// Copyright (c) 2018 The EROS developers
+// Copyright (c) 2018-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -37,8 +38,8 @@ namespace invalid_out
             if (!vTxid.isStr())
                 return false;
 
-            uint256 txid = uint256(vTxid.get_str());
-            if (txid == 0)
+            uint256 txid = uint256S(vTxid.get_str());
+            if (txid.IsNull())
                 return false;
 
             const UniValue &vN = find_value(o, "n");

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2020 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -44,8 +45,11 @@ private Q_SLOTS:
     void changeTheme(bool isLightTheme, QString &theme) override ;
     void onLabelClicked();
     void onCopyClicked();
+    void refreshView(const QModelIndex& tl, const QModelIndex& br);
     void refreshView(QString refreshAddress = QString());
     void handleAddressClicked(const QModelIndex &index);
+    void onSortChanged(int idx);
+    void onSortOrderChanged(int idx);
 private:
     Ui::ReceiveWidget *ui;
 
@@ -60,9 +64,14 @@ private:
     // Cached qr
     QPixmap *qrImage = nullptr;
 
+    // Cached sort type and order
+    AddressTableModel::ColumnIndex sortType = AddressTableModel::Label;
+    Qt::SortOrder sortOrder = Qt::AscendingOrder;
+
     void updateQr(QString address);
     void updateLabel();
     void showAddressGenerationDialog(bool isPaymentRequest);
+    void sortAddresses();
 
     bool isShowingDialog = false;
 

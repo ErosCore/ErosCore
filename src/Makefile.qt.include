@@ -12,26 +12,21 @@ QT_FORMS_UI = \
   qt/forms/addressbookpage.ui \
   qt/forms/askpassphrasedialog.ui \
   qt/forms/coincontroldialog.ui \
-  qt/forms/blockexplorer.ui \
   qt/forms/editaddressdialog.ui \
-  qt/forms/governancepage.ui \
   qt/forms/helpmessagedialog.ui \
   qt/forms/intro.ui \
   qt/forms/openuridialog.ui \
   qt/forms/optionsdialog.ui \
   qt/forms/rpcconsole.ui \
   qt/eros/forms/loadingdialog.ui \
-  qt/forms/zerscontroldialog.ui \
   qt/eros/forms/snackbar.ui \
   qt/eros/forms/navmenuwidget.ui \
   qt/eros/forms/lockunlock.ui \
   qt/eros/forms/expandablebutton.ui \
   qt/eros/forms/receivedialog.ui \
-  qt/eros/forms/walletpassworddialog.ui \
   qt/eros/forms/topbar.ui \
   qt/eros/forms/txrow.ui \
   qt/eros/forms/dashboardwidget.ui \
-  qt/eros/forms/coincontrolerswidget.ui \
   qt/eros/forms/addresslabelrow.ui \
   qt/eros/forms/contactdropdownrow.ui \
   qt/eros/forms/mninfodialog.ui \
@@ -54,10 +49,9 @@ QT_FORMS_UI = \
   qt/eros/forms/tooltipmenu.ui \
   qt/eros/forms/addresseswidget.ui \
   qt/eros/forms/defaultdialog.ui \
-  qt/eros/forms/denomgenerationdialog.ui \
-  qt/eros/forms/privacywidget.ui \
   qt/eros/forms/coldstakingwidget.ui \
   qt/eros/settings/forms/settingsbackupwallet.ui \
+  qt/eros/settings/forms/settingsexportcsv.ui \
   qt/eros/settings/forms/settingsbittoolwidget.ui \
   qt/eros/settings/forms/settingsconsolewidget.ui \
   qt/eros/settings/forms/settingsdisplayoptionswidget.ui \
@@ -79,16 +73,13 @@ QT_MOC_CPP = \
   qt/moc_askpassphrasedialog.cpp \
   qt/moc_bantablemodel.cpp \
   qt/moc_bitcoinaddressvalidator.cpp \
-  qt/moc_bitcoinamountfield.cpp \
   qt/eros/moc_erosgui.cpp \
   qt/moc_bitcoinunits.cpp \
-  qt/moc_blockexplorer.cpp \
   qt/moc_clientmodel.cpp \
   qt/moc_coincontroldialog.cpp \
   qt/moc_coincontroltreewidget.cpp \
   qt/moc_csvmodelwriter.cpp \
   qt/moc_editaddressdialog.cpp \
-  qt/moc_governancepage.cpp \
   qt/moc_guiutil.cpp \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
@@ -101,7 +92,6 @@ QT_MOC_CPP = \
   qt/moc_paymentserver.cpp \
   qt/moc_qvalidatedlineedit.cpp \
   qt/moc_qvaluecombobox.cpp \
-  qt/moc_proposalframe.cpp \
   qt/moc_recentrequeststablemodel.cpp \
   qt/moc_rpcconsole.cpp \
   qt/moc_splashscreen.cpp \
@@ -112,20 +102,18 @@ QT_MOC_CPP = \
   qt/moc_utilitydialog.cpp \
   qt/moc_walletmodel.cpp \
   qt/eros/moc_loadingdialog.cpp \
-  qt/moc_zerscontroldialog.cpp \
   qt/eros/moc_pwidget.cpp \
+  qt/eros/moc_focuseddialog.cpp \
   qt/eros/moc_snackbar.cpp \
   qt/eros/moc_navmenuwidget.cpp \
   qt/eros/moc_lockunlock.cpp \
   qt/eros/moc_expandablebutton.cpp \
   qt/eros/moc_furabstractlistitemdelegate.cpp \
   qt/eros/moc_receivedialog.cpp \
-  qt/eros/moc_walletpassworddialog.cpp \
   qt/eros/moc_pfborderimage.cpp \
   qt/eros/moc_topbar.cpp \
   qt/eros/moc_txrow.cpp \
   qt/eros/moc_dashboardwidget.cpp \
-  qt/eros/moc_coincontrolerswidget.cpp \
   qt/eros/moc_addresslabelrow.cpp \
   qt/eros/moc_contactdropdownrow.cpp \
   qt/eros/moc_mninfodialog.cpp \
@@ -151,10 +139,9 @@ QT_MOC_CPP = \
   qt/eros/moc_tooltipmenu.cpp \
   qt/eros/moc_addresseswidget.cpp \
   qt/eros/moc_defaultdialog.cpp \
-  qt/eros/moc_denomgenerationdialog.cpp \
-  qt/eros/moc_privacywidget.cpp \
   qt/eros/moc_coldstakingwidget.cpp \
   qt/eros/settings/moc_settingsbackupwallet.cpp \
+  qt/eros/settings/moc_settingsexportcsv.cpp \
   qt/eros/settings/moc_settingsbittoolwidget.cpp \
   qt/eros/settings/moc_settingsconsolewidget.cpp \
   qt/eros/settings/moc_settingsdisplayoptionswidget.cpp \
@@ -176,7 +163,6 @@ BITCOIN_MM = \
 
 QT_MOC = \
   qt/eros.moc \
-  qt/bitcoinamountfield.moc \
   qt/intro.moc \
   qt/rpcconsole.moc \
   qt/eros/settings/moc_settingsconsolewidget.cpp
@@ -196,16 +182,13 @@ BITCOIN_QT_H = \
   qt/askpassphrasedialog.h \
   qt/bantablemodel.h \
   qt/bitcoinaddressvalidator.h \
-  qt/bitcoinamountfield.h \
   qt/eros/erosgui.h \
   qt/bitcoinunits.h \
-  qt/blockexplorer.h \
   qt/clientmodel.h \
   qt/coincontroldialog.h \
   qt/coincontroltreewidget.h \
   qt/csvmodelwriter.h \
   qt/editaddressdialog.h \
-  qt/governancepage.h \
   qt/guiconstants.h \
   qt/guiutil.h \
   qt/intro.h \
@@ -220,7 +203,6 @@ BITCOIN_QT_H = \
   qt/paymentserver.h \
   qt/peertablemodel.h \
   qt/platformstyle.h \
-  qt/proposalframe.h \
   qt/qvalidatedlineedit.h \
   qt/qvaluecombobox.h \
   qt/recentrequeststablemodel.h \
@@ -238,8 +220,8 @@ BITCOIN_QT_H = \
   qt/eros/pfborderimage.h \
   qt/eros/loadingdialog.h \
   qt/winshutdownmonitor.h \
-  qt/zerscontroldialog.h \
   qt/eros/pwidget.h \
+  qt/eros/focuseddialog.h \
   qt/eros/guitransactionsutils.h \
   qt/eros/snackbar.h \
   qt/eros/navmenuwidget.h \
@@ -250,13 +232,11 @@ BITCOIN_QT_H = \
   qt/eros/txviewholder.h \
   qt/eros/qtutils.h \
   qt/eros/expandablebutton.h \
-  qt/eros/walletpassworddialog.h \
   qt/eros/topbar.h \
   qt/eros/txrow.h \
   qt/eros/addressholder.h \
   qt/eros/addressfilterproxymodel.h \
   qt/eros/dashboardwidget.h \
-  qt/eros/coincontrolerswidget.h \
   qt/eros/addresslabelrow.h \
   qt/eros/contactdropdownrow.h \
   qt/eros/mninfodialog.h \
@@ -282,10 +262,9 @@ BITCOIN_QT_H = \
   qt/eros/tooltipmenu.h \
   qt/eros/addresseswidget.h \
   qt/eros/defaultdialog.h \
-  qt/eros/denomgenerationdialog.h \
-  qt/eros/privacywidget.h \
   qt/eros/coldstakingwidget.h \
   qt/eros/settings/settingsbackupwallet.h \
+  qt/eros/settings/settingsexportcsv.h \
   qt/eros/settings/settingsbittoolwidget.h \
   qt/eros/settings/settingsconsolewidget.h \
   qt/eros/settings/settingsdisplayoptionswidget.h \
@@ -302,76 +281,18 @@ BITCOIN_QT_H = \
   qt/eros/splash.h
 
 RES_ICONS = \
-  qt/res/icons/add.png \
-  qt/res/icons/address-book.png \
   qt/res/icons/bitcoin.ico \
   qt/res/icons/bitcoin.png \
   qt/res/icons/bitcoin_testnet.ico \
   qt/res/icons/bitcoin_testnet.png \
   qt/res/icons/bitcoin_regtest.png \
-  qt/res/icons/browse.png \
-  qt/res/icons/clock1.png \
-  qt/res/icons/clock2.png \
-  qt/res/icons/clock3.png \
-  qt/res/icons/clock4.png \
-  qt/res/icons/clock5.png \
-  qt/res/icons/configure.png \
-  qt/res/icons/connect0_16.png \
-  qt/res/icons/connect1_16.png \
-  qt/res/icons/connect2_16.png \
-  qt/res/icons/connect3_16.png \
-  qt/res/icons/connect4_16.png \
-  qt/res/icons/debugwindow.png \
-  qt/res/icons/edit.png \
-  qt/res/icons/editcopy.png \
-  qt/res/icons/editpaste.png \
-  qt/res/icons/explorer.png \
-  qt/res/icons/export.png \
-  qt/res/icons/eye.png \
-  qt/res/icons/eye_minus.png \
-  qt/res/icons/eye_plus.png \
-  qt/res/icons/filesave.png \
-  qt/res/icons/history.png \
-  qt/res/icons/key.png \
   qt/res/icons/lock_closed.png \
   qt/res/icons/lock_open.png \
-  qt/res/icons/masternodes.png \
-  qt/res/icons/onion.png \
   qt/res/icons/overview.png \
-  qt/res/icons/qrcode.png \
-  qt/res/icons/quit.png \
-  qt/res/icons/receive.png \
-  qt/res/icons/receive_dark.png \
-  qt/res/icons/privacy.png \
-  qt/res/icons/remove.png \
-  qt/res/icons/send.png \
-  qt/res/icons/send_dark.png \
-  qt/res/icons/governance.png \
-  qt/res/icons/governance_dark.png \
-  qt/res/icons/staking_active.png \
-  qt/res/icons/staking_inactive.png \
-  qt/res/icons/synced.png \
-  qt/res/icons/trade.png \
-  qt/res/icons/transaction0.png \
-  qt/res/icons/transaction2.png \
-  qt/res/icons/transaction_conflicted.png \
-  qt/res/icons/tx_inout.png \
-  qt/res/icons/tx_input.png \
-  qt/res/icons/tx_output.png \
-  qt/res/icons/tx_mined.png \
   qt/res/icons/ic-transaction-received.svg \
   qt/res/icons/ic-transaction-mint.svg \
   qt/res/icons/ic-transaction-sent.svg \
   qt/res/icons/ic-transaction-staked.svg \
-  qt/res/icons/unit_eros.png \
-  qt/res/icons/unit_meros.png \
-  qt/res/icons/unit_ueros.png \
-  qt/res/icons/unit_teros.png \
-  qt/res/icons/unit_tmeros.png \
-  qt/res/icons/unit_tueros.png \
-  qt/res/icons/yesvote.png \
-  qt/res/icons/novote.png \
-  qt/res/icons/abstainvote.png \
   qt/eros/res/img/bg-dashboard-banner.png \
   qt/eros/res/img/bg-multi-number-dark.svg \
   qt/eros/res/img/ic-check-locked.svg \
@@ -583,10 +504,8 @@ RES_ICONS = \
 BITCOIN_QT_BASE_CPP = \
   qt/bantablemodel.cpp \
   qt/bitcoinaddressvalidator.cpp \
-  qt/bitcoinamountfield.cpp \
   qt/eros/erosgui.cpp \
   qt/bitcoinunits.cpp \
-  qt/blockexplorer.cpp \
   qt/clientmodel.cpp \
   qt/csvmodelwriter.cpp \
   qt/guiutil.cpp \
@@ -610,15 +529,12 @@ BITCOIN_QT_WALLET_CPP = \
   qt/addressbookpage.cpp \
   qt/addresstablemodel.cpp \
   qt/askpassphrasedialog.cpp \
-  qt/blockexplorer.cpp \
   qt/coincontroldialog.cpp \
   qt/coincontroltreewidget.cpp \
   qt/editaddressdialog.cpp \
-  qt/governancepage.cpp \
   qt/openuridialog.cpp \
   qt/paymentrequestplus.cpp \
   qt/paymentserver.cpp \
-  qt/proposalframe.cpp \
   qt/recentrequeststablemodel.cpp \
   qt/transactiondesc.cpp \
   qt/transactionfilterproxy.cpp \
@@ -627,8 +543,8 @@ BITCOIN_QT_WALLET_CPP = \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
   qt/eros/loadingdialog.cpp \
-  qt/zerscontroldialog.cpp \
   qt/eros/pwidget.cpp \
+  qt/eros/focuseddialog.cpp \
   qt/eros/guitransactionsutils.cpp \
   qt/eros/snackbar.cpp \
   qt/eros/navmenuwidget.cpp \
@@ -638,13 +554,11 @@ BITCOIN_QT_WALLET_CPP = \
   qt/eros/txviewholder.cpp \
   qt/eros/qtutils.cpp \
   qt/eros/expandablebutton.cpp \
-  qt/eros/walletpassworddialog.cpp \
   qt/eros/topbar.cpp \
   qt/eros/txrow.cpp \
   qt/eros/addressholder.cpp \
   qt/eros/addressfilterproxymodel.cpp \
   qt/eros/dashboardwidget.cpp \
-  qt/eros/coincontrolerswidget.cpp \
   qt/eros/addresslabelrow.cpp \
   qt/eros/contactdropdownrow.cpp \
   qt/eros/contactsdropdown.cpp \
@@ -670,10 +584,9 @@ BITCOIN_QT_WALLET_CPP = \
   qt/eros/tooltipmenu.cpp \
   qt/eros/addresseswidget.cpp \
   qt/eros/defaultdialog.cpp \
-  qt/eros/denomgenerationdialog.cpp \
-  qt/eros/privacywidget.cpp \
   qt/eros/coldstakingwidget.cpp \
   qt/eros/settings/settingsbackupwallet.cpp \
+  qt/eros/settings/settingsexportcsv.cpp \
   qt/eros/settings/settingsbittoolwidget.cpp \
   qt/eros/settings/settingsconsolewidget.cpp \
   qt/eros/settings/settingsdisplayoptionswidget.cpp \
@@ -702,23 +615,12 @@ RES_IMAGES = \
   qt/res/images/about.png \
   qt/res/images/splash.png \
   qt/res/images/splash_testnet.png \
-  qt/res/images/splash_regtest.png \
-  qt/res/images/eros_logo_horizontal.png \
-  qt/res/images/downArrow_dark.png \
-  qt/res/images/downArrow_small_dark.png \
-  qt/res/images/downArrow_small.png \
-  qt/res/images/upArrow_small_dark.png \
-  qt/res/images/upArrow_small.png \
-  qt/res/images/leftArrow_small_dark.png \
-  qt/res/images/rightArrow_small_dark.png \
-  qt/res/images/qtreeview_selected.png
+  qt/res/images/splash_regtest.png
 
 RES_CSS = \
   qt/res/css/default.css \
   qt/eros/res/css/style_dark.css \
   qt/eros/res/css/style_light.css
-
-RES_MOVIES = $(wildcard $(srcdir)/qt/res/movies/spinner-*.png)
 
 BITCOIN_RC = qt/res/eros-qt-res.rc
 
@@ -731,7 +633,7 @@ qt_libbitcoinqt_a_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
 qt_libbitcoinqt_a_OBJCXXFLAGS = $(AM_OBJCXXFLAGS) $(QT_PIE_FLAGS)
 
 qt_libbitcoinqt_a_SOURCES = $(BITCOIN_QT_CPP) $(BITCOIN_QT_H) $(QT_FORMS_UI) \
-  $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES)
+  $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS)
 
 nodist_qt_libbitcoinqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
   $(PROTOBUF_H) $(QT_QRC_CPP) $(QT_QRC_LOCALE_CPP)
@@ -794,7 +696,7 @@ $(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 	@rm $(@D)/temp_$(<F)
 
-$(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES) $(PROTOBUF_H)
+$(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(PROTOBUF_H)
 	@test -f $(RCC)
 	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name eros $< | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@

@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2020 The EROS developers
+// Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -49,7 +50,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(vin);
         READWRITE(blockHash);
@@ -103,14 +104,14 @@ public:
 };
 
 //
-// The Masternode Class. For managing the Obfuscation process. It contains the input of the 10000 ERS, signature to prove
+// The Masternode Class. It contains the input of the 10000 ERS, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
 class CMasternode : public CSignedMessage
 {
 private:
     // critical section to protect the inner data structures
-    mutable CCriticalSection cs;
+    mutable RecursiveMutex cs;
     int64_t lastTimeChecked;
 
 public:
@@ -118,7 +119,6 @@ public:
         MASTERNODE_PRE_ENABLED,
         MASTERNODE_ENABLED,
         MASTERNODE_EXPIRED,
-        MASTERNODE_OUTPOINT_SPENT,
         MASTERNODE_REMOVE,
         MASTERNODE_WATCHDOG_EXPIRED,
         MASTERNODE_POSE_BAN,
@@ -140,14 +140,10 @@ public:
     bool unitTest;
     bool allowFreeTx;
     int protocolVersion;
-    int nActiveState;
     int64_t nLastDsq; //the dsq count from the last dsq broadcast of this node
     int nScanningErrorCount;
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
-
-    int64_t nLastDsee;  // temporary, do not save. Remove after migration to v12
-    int64_t nLastDseep; // temporary, do not save. Remove after migration to v12
 
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -203,7 +199,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         LOCK(cs);
 
@@ -228,13 +224,6 @@ public:
     int64_t SecondsSincePayment();
 
     bool UpdateFromNewBroadcast(CMasternodeBroadcast& mnb);
-
-    inline uint64_t SliceHash(uint256& hash, int slice)
-    {
-        uint64_t n = 0;
-        memcpy(&n, &hash + slice * 64, 64);
-        return n;
-    }
 
     void Check(bool forceCheck = false);
 
@@ -272,8 +261,6 @@ public:
 
         return cacheInputAge + (chainActive.Tip()->nHeight - cacheInputAgeBlock);
     }
-
-    std::string GetStatus();
 
     std::string Status()
     {
@@ -316,14 +303,14 @@ public:
     void Relay();
 
     // special sign/verify
-    bool Sign(const CKey& key, const CPubKey& pubKey, const bool fNewSigs);
-    bool Sign(const std::string strSignKey, const bool fNewSigs);
+    bool Sign(const CKey& key, const CPubKey& pubKey);
+    bool Sign(const std::string strSignKey);
     bool CheckSignature() const;
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(vin);
         READWRITE(addr);
@@ -341,7 +328,7 @@ public:
     /// Create Masternode broadcast, needs to be relayed manually after that
     static bool Create(CTxIn vin, CService service, CKey keyCollateralAddressNew, CPubKey pubKeyCollateralAddressNew, CKey keyMasternodeNew, CPubKey pubKeyMasternodeNew, std::string& strErrorRet, CMasternodeBroadcast& mnbRet);
     static bool Create(std::string strService, std::string strKey, std::string strTxHash, std::string strOutputIndex, std::string& strErrorRet, CMasternodeBroadcast& mnbRet, bool fOffline = false);
-    static bool CheckDefaultPort(std::string strService, std::string& strErrorRet, std::string strContext);
+    static bool CheckDefaultPort(CService service, std::string& strErrorRet, const std::string& strContext);
 };
 
 #endif

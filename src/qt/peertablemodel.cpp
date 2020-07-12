@@ -1,5 +1,5 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2020 The EROS developers
+// Copyright (c) 2017-2020 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,6 +11,8 @@
 
 #include "net.h"
 #include "sync.h"
+
+#include <algorithm>
 
 #include <QDebug>
 #include <QList>
@@ -83,7 +85,7 @@ public:
 
         if (sortColumn >= 0)
             // sort cacheNodeStats (use stable sort to prevent rows jumping around unneceesarily)
-            qStableSort(cachedNodeStats.begin(), cachedNodeStats.end(), NodeLessThan(sortColumn, sortOrder));
+            std::stable_sort(cachedNodeStats.begin(), cachedNodeStats.end(), NodeLessThan(sortColumn, sortOrder));
 
         // build index map
         mapNodeRows.clear();
@@ -118,7 +120,7 @@ PeerTableModel::PeerTableModel(ClientModel* parent) : QAbstractTableModel(parent
 
     // set up timer for auto refresh
     timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), SLOT(refresh()));
+    connect(timer, &QTimer::timeout, this, &PeerTableModel::refresh);
     timer->setInterval(MODEL_UPDATE_DELAY);
 
     // load initial data

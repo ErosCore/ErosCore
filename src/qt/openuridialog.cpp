@@ -1,3 +1,4 @@
+// Copyright (c) 2019 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -29,8 +30,8 @@ OpenURIDialog::OpenURIDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystem
     setCssProperty(ui->pushButtonCancel, "btn-dialog-cancel");
 
     initCssEditLine(ui->uriEdit, true);
-    connect(ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui->pushButtonOK, &QPushButton::clicked, this, &OpenURIDialog::accept);
+    connect(ui->pushButtonCancel, &QPushButton::clicked, this, &OpenURIDialog::close);
 }
 
 void OpenURIDialog::showEvent(QShowEvent *event)

@@ -39,6 +39,15 @@ Automatic zERS backup has been disabled. Thus, the following configuration optio
 - `backupzers`
 - `zersbackuppath`
 
+### Stake-Split threshold
+The stake split threshold is no longer required to be integer. It can be a fractional amount. A threshold value of 0 disables the stake-split functionality.
+The default value for the stake-split threshold has been lowered from 2000 ERS, down  to 500 ERS.
+
+
+Dependencies
+------------
+
+The minimum required version of QT has been increased from 5.0 to 5.5.1 (the [depends system](https://github.com/eroscore/eros/blob/master/depends/README.md) provides 5.9.7)
 
 
 RPC Changes
@@ -61,10 +70,14 @@ RPC Changes
 
  Mints are disabled, therefore it is no longer possible to mint the change of a zerocoin spend. The change is minimized by default.
 
+- `setstakesplitthreshold` now accepts decimal amounts. If the provided value is `0`, split staking gets disabled. `getstakesplitthreshold` returns a double.
+
 ### Removed commands
 
 The following commands have been removed from the RPC interface:
 - `createrawzerocoinstake`
+- `getmintsinblocks`
+
 
 ### Newly introduced commands
 
@@ -72,7 +85,6 @@ The following new commands have been added to the RPC interface:
 - `...`
 
 Details about each new command can be found below.
-
 
 
 *version* Change log

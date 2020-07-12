@@ -1,4 +1,5 @@
-// Copyright (c) 2018-2020 The EROS developers
+// Copyright (c) 2018-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,13 +9,14 @@
 #include "sync.h"
 #include "main.h"
 #include "txdb.h"
+#include "wallet/wallet.h"
 #include "wallet/walletdb.h"
 #include "zers/zerswallet.h"
 
 
-CzERSTracker::CzERSTracker(std::string strWalletFile)
+CzERSTracker::CzERSTracker(CWallet* parent)
 {
-    this->strWalletFile = strWalletFile;
+    this->wallet = parent;
     mapSerialHashes.clear();
     mapPendingSpends.clear();
     fInitialized = false;
@@ -40,10 +42,10 @@ bool CzERSTracker::Archive(CMintMeta& meta)
     if (mapSerialHashes.count(meta.hashSerial))
         mapSerialHashes.at(meta.hashSerial).isArchived = true;
 
-    CWalletDB walletdb(strWalletFile);
+    CWalletDB walletdb(wallet->strWalletFile);
     CZerocoinMint mint;
     if (walletdb.ReadZerocoinMint(meta.hashPubcoin, mint)) {
-        if (!CWalletDB(strWalletFile).ArchiveMintOrphan(mint))
+        if (!CWalletDB(wallet->strWalletFile).ArchiveMintOrphan(mint))
             return error("%s: failed to archive zerocoinmint", __func__);
     } else {
         //failed to read mint from DB, try reading deterministic
@@ -60,7 +62,7 @@ bool CzERSTracker::Archive(CMintMeta& meta)
 
 bool CzERSTracker::UnArchive(const uint256& hashPubcoin, bool isDeterministic)
 {
-    CWalletDB walletdb(strWalletFile);
+    CWalletDB walletdb(wallet->strWalletFile);
     if (isDeterministic) {
         CDeterministicMint dMint;
         if (!walletdb.UnarchiveDeterministicMint(hashPubcoin, dMint))
@@ -138,7 +140,7 @@ CAmount CzERSTracker::GetBalance(bool fConfirmedOnly, bool fUnconfirmedOnly) con
             CMintMeta meta = it.second;
             if (meta.isUsed || meta.isArchived)
                 continue;
-            bool fConfirmed = ((meta.nHeight < chainActive.Height() - Params().Zerocoin_MintRequiredConfirmations()) && !(meta.nHeight == 0));
+            bool fConfirmed = ((meta.nHeight < chainActive.Height() - Params().GetConsensus().ZC_MinMintConfirmations) && !(meta.nHeight == 0));
             if (fConfirmedOnly && !fConfirmed)
                 continue;
             if (fUnconfirmedOnly && fConfirmed)
@@ -166,7 +168,7 @@ std::vector<CMintMeta> CzERSTracker::GetMints(bool fConfirmedOnly) const
         CMintMeta mint = it.second;
         if (mint.isArchived || mint.isUsed)
             continue;
-        bool fConfirmed = (mint.nHeight < chainActive.Height() - Params().Zerocoin_MintRequiredConfirmations());
+        bool fConfirmed = (mint.nHeight < chainActive.Height() - Params().GetConsensus().ZC_MinMintConfirmations);
         if (fConfirmedOnly && !fConfirmed)
             continue;
         vMints.emplace_back(mint);
@@ -229,12 +231,12 @@ bool CzERSTracker::UpdateZerocoinMint(const CZerocoinMint& mint)
     mapSerialHashes.at(hashSerial) = meta;
 
     //Write to db
-    return CWalletDB(strWalletFile).WriteZerocoinMint(mint);
+    return CWalletDB(wallet->strWalletFile).WriteZerocoinMint(mint);
 }
 
 bool CzERSTracker::UpdateState(const CMintMeta& meta)
 {
-    CWalletDB walletdb(strWalletFile);
+    CWalletDB walletdb(wallet->strWalletFile);
 
     if (meta.isDeterministic) {
         CDeterministicMint dMint;
@@ -277,7 +279,7 @@ bool CzERSTracker::UpdateState(const CMintMeta& meta)
 
 void CzERSTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArchived, CzERSWallet* zERSWallet)
 {
-    bool iszERSWalletInitialized = (NULL != zERSWallet);
+    bool iszERSWalletInitialized = (nullptr != zERSWallet);
     CMintMeta meta;
     meta.hashPubcoin = dMint.GetPubcoinHash();
     meta.nHeight = dMint.GetHeight();
@@ -290,14 +292,14 @@ void CzERSTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArchi
     meta.isArchived = isArchived;
     meta.isDeterministic = true;
     if (! iszERSWalletInitialized)
-        zERSWallet = new CzERSWallet(strWalletFile);
+        zERSWallet = new CzERSWallet(wallet);
     meta.isSeedCorrect = zERSWallet->CheckSeed(dMint);
     if (! iszERSWalletInitialized)
         delete zERSWallet;
     mapSerialHashes[meta.hashSerial] = meta;
 
     if (isNew)
-        CWalletDB(strWalletFile).WriteDeterministicMint(dMint);
+        CWalletDB(wallet->strWalletFile).WriteDeterministicMint(dMint);
 }
 
 void CzERSTracker::Add(const CZerocoinMint& mint, bool isNew, bool isArchived)
@@ -318,7 +320,7 @@ void CzERSTracker::Add(const CZerocoinMint& mint, bool isNew, bool isArchived)
     mapSerialHashes[meta.hashSerial] = meta;
 
     if (isNew)
-        CWalletDB(strWalletFile).WriteZerocoinMint(mint);
+        CWalletDB(wallet->strWalletFile).WriteZerocoinMint(mint);
 }
 
 void CzERSTracker::SetPubcoinUsed(const uint256& hashPubcoin, const uint256& txid)
@@ -354,7 +356,7 @@ void CzERSTracker::RemovePending(const uint256& txid)
         }
     }
 
-    if (hashSerial > 0)
+    if (!hashSerial.IsNull())
         mapPendingSpends.erase(hashSerial);
 }
 
@@ -389,7 +391,7 @@ bool CzERSTracker::UpdateStatusInternal(const std::set<uint256>& setMempool, CMi
         uint256 hashBlock;
 
         // Txid will be marked 0 if there is no knowledge of the final tx hash yet
-        if (mint.txid == 0) {
+        if (mint.txid.IsNull()) {
             if (!isMintInChain) {
                 LogPrintf("%s : Failed to find mint in zerocoinDB %s\n", __func__, mint.hashPubcoin.GetHex().substr(0, 6));
                 mint.isArchived = true;
@@ -436,23 +438,21 @@ bool CzERSTracker::UpdateStatusInternal(const std::set<uint256>& setMempool, CMi
 
 std::set<CMintMeta> CzERSTracker::ListMints(bool fUnusedOnly, bool fMatureOnly, bool fUpdateStatus, bool fWrongSeed, bool fExcludeV1)
 {
-    CWalletDB walletdb(strWalletFile);
+    CWalletDB walletdb(wallet->strWalletFile);
     if (fUpdateStatus) {
         std::list<CZerocoinMint> listMintsDB = walletdb.ListMintedCoins();
         for (auto& mint : listMintsDB)
             Add(mint);
-        LogPrint("zero", "%s: added %d zerocoinmints from DB\n", __func__, listMintsDB.size());
+        LogPrint(BCLog::LEGACYZC, "%s: added %d zerocoinmints from DB\n", __func__, listMintsDB.size());
 
         std::list<CDeterministicMint> listDeterministicDB = walletdb.ListDeterministicMints();
 
-        CzERSWallet* zERSWallet = new CzERSWallet(strWalletFile);
         for (auto& dMint : listDeterministicDB) {
             if (fExcludeV1 && dMint.GetVersion() < 2)
                 continue;
-            Add(dMint, false, false, zERSWallet);
+            Add(dMint, false, false, wallet->zwalletMain);
         }
-        delete zERSWallet;
-        LogPrint("zero", "%s: added %d dzers from DB\n", __func__, listDeterministicDB.size());
+        LogPrint(BCLog::LEGACYZC, "%s: added %d dzers from DB\n", __func__, listDeterministicDB.size());
     }
 
     std::vector<CMintMeta> vOverWrite;
@@ -484,7 +484,7 @@ std::set<CMintMeta> CzERSTracker::ListMints(bool fUnusedOnly, bool fMatureOnly, 
 
         if (fMatureOnly) {
             // Not confirmed
-            if (!mint.nHeight || mint.nHeight > chainActive.Height() - Params().Zerocoin_MintRequiredConfirmations())
+            if (!mint.nHeight || mint.nHeight > chainActive.Height() - Params().GetConsensus().ZC_MinMintConfirmations)
                 continue;
         }
 

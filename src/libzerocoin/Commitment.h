@@ -9,7 +9,8 @@
  * @copyright  Copyright 2013 Ian Miers, Christina Garman and Matthew Green
  * @license    This project is released under the MIT license.
  **/
-// Copyright (c) 2017-2020 The EROS developers
+// Copyright (c) 2017-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 
 #ifndef COMMITMENT_H_
 #define COMMITMENT_H_
@@ -56,7 +57,7 @@ private:
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(commitmentValue); READWRITE(randomness); READWRITE(contents);
     }

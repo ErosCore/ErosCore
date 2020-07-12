@@ -1,10 +1,12 @@
-// Copyright (c) 2018 The EROS developers
+// Copyright (c) 2018-2020 The PIVX developers
+// Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef EROS_ZERSCHAIN_H
 #define EROS_ZERSCHAIN_H
 
+#include "chain.h"
 #include "libzerocoin/Coin.h"
 #include "libzerocoin/Denominations.h"
 #include "libzerocoin/CoinSpend.h"
@@ -12,6 +14,7 @@
 #include <string>
 
 class CBlock;
+class CBlockIndex;
 class CBigNum;
 struct CMintMeta;
 class CTransaction;
@@ -25,7 +28,6 @@ bool BlockToMintValueVector(const CBlock& block, const libzerocoin::CoinDenomina
 bool BlockToPubcoinList(const CBlock& block, std::list<libzerocoin::PublicCoin>& listPubcoins, bool fFilterInvalid);
 bool BlockToZerocoinMintList(const CBlock& block, std::list<CZerocoinMint>& vMints, bool fFilterInvalid);
 void FindMints(std::vector<CMintMeta> vMintsToFind, std::vector<CMintMeta>& vMintsToUpdate, std::vector<CMintMeta>& vMissingMints);
-int GetZerocoinStartHeight();
 bool GetZerocoinMint(const CBigNum& bnPubcoin, uint256& txHash);
 bool IsPubcoinInBlockchain(const uint256& hashPubcoin, uint256& txid);
 bool IsSerialInBlockchain(const CBigNum& bnSerial, int& nHeightTx);
@@ -37,5 +39,10 @@ libzerocoin::CoinSpend TxInToZerocoinSpend(const CTxIn& txin);
 bool TxOutToPublicCoin(const CTxOut& txout, libzerocoin::PublicCoin& pubCoin, CValidationState& state);
 std::list<libzerocoin::CoinDenomination> ZerocoinSpendListFromBlock(const CBlock& block, bool fFilterInvalid);
 
+/** Global variable for the zerocoin supply */
+extern std::map<libzerocoin::CoinDenomination, int64_t> mapZerocoinSupply;
+int64_t GetZerocoinSupply();
+bool UpdateZERSSupplyConnect(const CBlock& block, CBlockIndex* pindex, bool fJustCheck);
+bool UpdateZERSSupplyDisconnect(const CBlock& block, CBlockIndex* pindex);
 
 #endif //EROS_ZERSCHAIN_H

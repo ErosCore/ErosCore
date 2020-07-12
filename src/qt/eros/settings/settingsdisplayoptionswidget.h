@@ -1,3 +1,4 @@
+// Copyright (c) 2019 The PIVX developers
 // Copyright (c) 2020 The EROS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -27,6 +28,10 @@ public:
 
 public Q_SLOTS:
     void onResetClicked();
+
+Q_SIGNALS:
+    void saveSettings();
+    void discardSettings();
 
 private:
     Ui::SettingsDisplayOptionsWidget *ui;
