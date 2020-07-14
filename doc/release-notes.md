@@ -34,57 +34,126 @@ Notable Changes
 
 (Developers: add your notes here as part of your pull requests whenever possible)
 
-Automatic zERS backup has been disabled. Thus, the following configuration options have been removed  (either as entries in the eros.conf file or as startup flags):
-- `autozersbackup`
-- `backupzers`
-- `zersbackuppath`
+### Memory pool limiting
+
+Previous versions of EROS Core had their mempool limited by checking a transaction's fees against the node's minimum relay fee. There was no upper bound on the size of the mempool and attackers could send a large number of transactions paying just slighly more than the default minimum relay fee to crash nodes with relatively low RAM.
+
+EROS Core 4.2.0 will have a strict maximum size on the mempool. The default value is 300 MB and can be configured with the `-maxmempool` parameter. Whenever a transaction would cause the mempool to exceed its maximum size, the transaction that (along with in-mempool descendants) has the lowest total feerate (as a package) will be evicted and the node's effective minimum relay feerate will be increased to match this feerate plus the initial minimum relay feerate. The initial minimum relay feerate is set to 1000 satoshis per kB.
+
+EROS Core 4.2.0 also introduces new default policy limits on the length and size of unconfirmed transaction chains that are allowed in the mempool (generally limiting the length of unconfirmed chains to 25 transactions, with a total size of 101 KB). These limits can be overridden using command line arguments.
+
+### Benchmarking Framework
+
+EROS Core 4.2.0 backports  the internal benchmarking framework from Bitcoin Core, which can be used to benchmark cryptographic algorithms (e.g. SHA1, SHA256, SHA512, RIPEMD160, Poly1305, ChaCha20), Base58 encoding and decoding and thread queue. More tests are needed for script validation, coin selection and coins database, cuckoo cache, p2p throughtput.
+
+The binary file is compiled with eros-core, unless configured with `--disable-bench`.<br>
+After compiling eros-core, the benchmarks can be run with:
+```
+src/bench/bench_eros
+```
+The output will be similar to:
+```
+#Benchmark,count,min(ns),max(ns),average(ns),min_cycles,max_cycles,average_cycles
+Base58CheckEncode,131072,7697,8065,7785,20015,20971,20242
+```
+
+'label' and 'account' APIs for wallet
+-------------------------------------
+
+A new 'label' API has been introduced for the wallet. This is intended as a
+replacement for the deprecated 'account' API. The 'account' can continue to
+be used in v4.2 by starting erosd with the '-deprecatedrpc=accounts'
+argument, and will be fully removed in v5.0.
+
+The label RPC methods mirror the account functionality, with the following functional differences:
+
+- Labels can be set on any address, not just receiving addresses. This functionality was previously only available through the GUI.
+- Labels can be deleted by reassigning all addresses using the `setlabel` RPC method.
+- There isn't support for sending transactions _from_ a label, or for determining which label a transaction was sent from.
+- Labels do not have a balance.
+
+Here are the changes to RPC methods:
+
+| Deprecated Method       | New Method            | Notes       |
+| :---------------------- | :-------------------- | :-----------|
+| `getaccount`            | `getaddressinfo`      | `getaddressinfo` returns a json object with address information instead of just the name of the account as a string. |
+| `getaccountaddress`     | n/a                   | There is no replacement for `getaccountaddress` since labels do not have an associated receive address. |
+| `getaddressesbyaccount` | `getaddressesbylabel` | `getaddressesbylabel` returns a json object with the addresses as keys, instead of a list of strings. |
+| `getreceivedbyaccount`  | `getreceivedbylabel`  | _no change in behavior_ |
+| `listaccounts`          | `listlabels`          | `listlabels` does not return a balance or accept `minconf` and `watchonly` arguments. |
+| `listreceivedbyaccount` | `listreceivedbylabel` | Both methods return new `label` fields, along with `account` fields for backward compatibility. |
+| `move`                  | n/a                   | _no replacement_ |
+| `sendfrom`              | n/a                   | _no replacement_ |
+| `setaccount`            | `setlabel`            | Both methods now: <ul><li>allow assigning labels to any address, instead of raising an error if the address is not receiving address.<li>delete the previous label associated with an address when the final address using that label is reassigned to a different label, instead of making an implicit `getaccountaddress` call to ensure the previous label still has a receiving address. |
+
+| Changed Method         | Notes   |
+| :--------------------- | :------ |
+| `listunspent`          | Returns new `label` fields, along with `account` fields for backward compatibility if running with the `-deprecatedrpc=accounts` argument |
+| `sendmany`             | The first parameter has been renamed to `dummy`, and must be set to an empty string, unless running with the `-deprecatedrpc=accounts` argument (in which case functionality is unchanged). |
+| `listtransactions`     | The first parameter has been renamed to `dummy`, and must be set to the string `*`, unless running with the `-deprecatedrpc=accounts` argument (in which case functionality is unchanged). |
+| `getbalance`           | `account`, `minconf` and `include_watchonly` parameters are deprecated, and can only be used if running with the `-deprecatedrpc=accounts` argument |
+| `getcoldstakingbalance`| The `account` parameter is deprecated, and can only be used if running with the `-deprecatedrpc=accounts` argument (in which case functionality is unchanged) |
+| `getdelegatedbalance`  | The `account` parameter is deprecated, and can only be used if running with the `-deprecatedrpc=accounts` argument (in which case functionality is unchanged) |
+
+GUI Changes
+----------
+
+### Topbar navigation
+
+- The "sync" button in the GUI topbar can be clicked to go directly to the Settings --> Information panel (where the current block number and hash is shown).
+
+- The "connections" button in the GUI topbar can be clicked to open the network monitor dialog.
+
+### Removed zerocoin GUI
+
+Spending zERS and getting zERS balance information is no longer available in the graphical interface. The feature remains accessible through the RPC interface: `getzerocoinbalance`, `listmintedzerocoins`, `listzerocoinamounts`, `spendzerocoin`, `spendzerocoinmints`.
+
+
+Functional Changes
+----------
 
 ### Stake-Split threshold
-The stake split threshold is no longer required to be integer. It can be a fractional amount. A threshold value of 0 disables the stake-split functionality.
-The default value for the stake-split threshold has been lowered from 2000 ERS, down  to 500 ERS.
 
+If the stake split is active (threshold > 0), then stake split threshold value must be greater than a minimum, set by default at 100 ERS. The minimum value can be changed using the `-minstakesplit` startup flag. A value `0` is still allowed, regardless of the minimum set, and, as before, can be used to disable the stake splitting functionality.
+
+### Changed command-line options
+
+- new command `-minstakesplit` to modify the minimum allowed for  the stake split threshold.
+
+- new commands `-maxmempool`, to customize  the memory pool size limit, and `-checkmempool=N`, to customize the frequency of the mempool check.
+
+- new commands `-limitancestorcount=N` and `limitancestorsize=N`, to limit the number and total size of all in-mempool ancestors for a transaction.
+
+- new commands `-limitdescendantcount=N` and `limitdescendantsize=N`, to limit the number and total size of all in-mempool descendants for a transaction.
 
 Dependencies
 ------------
 
-The minimum required version of QT has been increased from 5.0 to 5.5.1 (the [depends system](https://github.com/eroscore/eros/blob/master/depends/README.md) provides 5.9.7)
+...
 
 
 RPC Changes
---------------
+------------
+
+### Low-level API changes
+
+- The `asm` property of each scriptSig now contains the decoded signature hash type for each signature that provides a valid defined hash type.<br>
+The following items contain assembly representations of scriptSig signatures
+and are affected by this change: RPC `getrawtransaction`, RPC `decoderawtransaction`, REST `/rest/tx/` (JSON format), REST `/rest/block/` (JSON format when including extended tx details), `eros-tx -json`
 
 ### Modified input/output for existing commands
 
-- "CoinStake" JSON object in `getblock` output is removed, and replaced with the strings "stakeModifier" and "hashProofOfStake"
+- new "usage" field in the output of `getmempoolinfo`, displaying the total memory usage for the mempool.
 
-- "isPublicSpend" boolean (optional) input parameter is removed from the following commands:
- - `createrawzerocoinspend`
- - `spendzerocoin`
- - `spendzerocoinmints`
- - `spendrawzerocoin`
+- new "upgrades" field in the output of `getblockchaininfo`, showing upcoming and active network upgrades.
 
- These commands are now able to create only *public* spends (private spends were already enabled only on regtest).
-
-- "mintchange" and "minimizechange" boolean input parameters are removed from the following commands:
- - `spendzerocoin`
-
- Mints are disabled, therefore it is no longer possible to mint the change of a zerocoin spend. The change is minimized by default.
-
-- `setstakesplitthreshold` now accepts decimal amounts. If the provided value is `0`, split staking gets disabled. `getstakesplitthreshold` returns a double.
+- `listreceivedbyaddress` has a new optional "addressFilter" argument that will filter the results to only the specified address
 
 ### Removed commands
 
-The following commands have been removed from the RPC interface:
-- `createrawzerocoinstake`
-- `getmintsinblocks`
-
+- `masternodedebug`. Use `getmasternodestatus` instead.
 
 ### Newly introduced commands
-
-The following new commands have been added to the RPC interface:
-- `...`
-
-Details about each new command can be found below.
 
 
 *version* Change log
@@ -111,4 +180,4 @@ Detailed release notes follow. This overview includes changes that affect behavi
 Thanks to everyone who directly contributed to this release:
 
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/Eros-translations/), the QA team during Testing and the Node hosts supporting our Testnet.
+

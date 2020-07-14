@@ -5,13 +5,14 @@
 
 #include "qt/eros/welcomecontentwidget.h"
 #include "qt/eros/forms/ui_welcomecontentwidget.h"
+
+#include "guiutil.h"
+
+#include <QDir>
 #include <QFile>
 #include <QListView>
-#include <QDir>
-#include "guiutil.h"
+#include <QScreen>
 #include <QSettings>
-#include <iostream>
-#include <QDesktopWidget>
 
 WelcomeContentWidget::WelcomeContentWidget(QWidget *parent) :
     QDialog(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint),
@@ -168,7 +169,7 @@ WelcomeContentWidget::WelcomeContentWidget(QWidget *parent) :
     QRect r(QPoint(), size());
     resize(r.size());
     setFixedSize(r.size());
-    move(QApplication::desktop()->screenGeometry().center() - r.center());
+    move(QGuiApplication::primaryScreen()->geometry().center() - r.center());
 }
 
 void WelcomeContentWidget::initLanguages()

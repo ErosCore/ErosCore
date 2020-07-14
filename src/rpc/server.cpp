@@ -200,23 +200,21 @@ std::string CRPCTable::help(std::string strCommand) const
     std::set<rpcfn_type> setDone;
     std::vector<std::pair<std::string, const CRPCCommand*> > vCommands;
 
-    for (std::map<std::string, const CRPCCommand*>::const_iterator mi = mapCommands.begin(); mi != mapCommands.end(); ++mi)
-        vCommands.push_back(std::make_pair(mi->second->category + mi->first, mi->second));
+    for (const auto& entry : mapCommands)
+        vCommands.push_back(std::make_pair(entry.second->category + entry.first, entry.second));
     std::sort(vCommands.begin(), vCommands.end());
 
-    for (const PAIRTYPE(std::string, const CRPCCommand*) & command : vCommands) {
+    for (const std::pair<std::string, const CRPCCommand*>& command : vCommands) {
         const CRPCCommand* pcmd = command.second;
         std::string strMethod = pcmd->name;
-        // We already filter duplicates, but these deprecated screw up the sort order
-        if (strMethod.find("label") != std::string::npos)
-            continue;
         if ((strCommand != "" || pcmd->category == "hidden") && strMethod != strCommand)
             continue;
         try {
-            UniValue params;
+            JSONRPCRequest jreq;
+            jreq.fHelp = true;
             rpcfn_type pfn = pcmd->actor;
             if (setDone.insert(pfn).second)
-                (*pfn)(params, true);
+                (*pfn)(jreq);
         } catch (const std::exception& e) {
             // Help text is returned in an exception
             std::string strHelp = std::string(e.what());
@@ -242,9 +240,9 @@ std::string CRPCTable::help(std::string strCommand) const
     return strRet;
 }
 
-UniValue help(const UniValue& params, bool fHelp)
+UniValue help(const JSONRPCRequest& jsonRequest)
 {
-    if (fHelp || params.size() > 1)
+    if (jsonRequest.fHelp || jsonRequest.params.size() > 1)
         throw std::runtime_error(
             "help ( \"command\" )\n"
             "\nList all commands, or get help for a specified command.\n"
@@ -254,17 +252,17 @@ UniValue help(const UniValue& params, bool fHelp)
             "\"text\"     (string) The help text\n");
 
     std::string strCommand;
-    if (params.size() > 0)
-        strCommand = params[0].get_str();
+    if (jsonRequest.params.size() > 0)
+        strCommand = jsonRequest.params[0].get_str();
 
     return tableRPC.help(strCommand);
 }
 
 
-UniValue stop(const UniValue& params, bool fHelp)
+UniValue stop(const JSONRPCRequest& jsonRequest)
 {
     // Accept the deprecated and ignored 'detach' boolean argument
-    if (fHelp || params.size() > 1)
+    if (jsonRequest.fHelp || jsonRequest.params.size() > 1)
         throw std::runtime_error(
             "stop\n"
             "\nStop EROS server.");
@@ -361,7 +359,7 @@ static const CRPCCommand vRPCCommands[] =
         { "hidden",             "waitforblock",           &waitforblock,           true },
         { "hidden",             "waitforblockheight",     &waitforblockheight,     true },
 
-        /* PIVX features */
+        /* EROS features */
         {"eros", "listmasternodes", &listmasternodes, true },
         {"eros", "getmasternodecount", &getmasternodecount, true },
         {"eros", "createmasternodebroadcast", &createmasternodebroadcast, true },
@@ -480,7 +478,7 @@ bool RPCIsInWarmup(std::string* outStatus)
     return fRPCInWarmup;
 }
 
-void JSONRequest::parse(const UniValue& valRequest)
+void JSONRPCRequest::parse(const UniValue& valRequest)
 {
     // Parse request
     if (!valRequest.isObject())
@@ -510,16 +508,22 @@ void JSONRequest::parse(const UniValue& valRequest)
         throw JSONRPCError(RPC_INVALID_REQUEST, "Params must be an array");
 }
 
+bool IsDeprecatedRPCEnabled(const std::string& method)
+{
+    const std::vector<std::string> enabled_methods = mapMultiArgs["-deprecatedrpc"];
+
+    return find(enabled_methods.begin(), enabled_methods.end(), method) != enabled_methods.end();
+}
 
 static UniValue JSONRPCExecOne(const UniValue& req)
 {
     UniValue rpc_result(UniValue::VOBJ);
 
-    JSONRequest jreq;
+    JSONRPCRequest jreq;
     try {
         jreq.parse(req);
 
-        UniValue result = tableRPC.execute(jreq.strMethod, jreq.params);
+        UniValue result = tableRPC.execute(jreq);
         rpc_result = JSONRPCReplyObj(result, NullUniValue, jreq.id);
     } catch (const UniValue& objError) {
         rpc_result = JSONRPCReplyObj(NullUniValue, objError, jreq.id);
@@ -540,10 +544,10 @@ std::string JSONRPCExecBatch(const UniValue& vReq)
     return ret.write() + "\n";
 }
 
-UniValue CRPCTable::execute(const std::string &strMethod, const UniValue &params) const
+UniValue CRPCTable::execute(const JSONRPCRequest &request) const
 {
     // Find method
-    const CRPCCommand* pcmd = tableRPC[strMethod];
+    const CRPCCommand* pcmd = tableRPC[request.strMethod];
     if (!pcmd)
         throw JSONRPCError(RPC_METHOD_NOT_FOUND, "Method not found");
 
@@ -551,7 +555,7 @@ UniValue CRPCTable::execute(const std::string &strMethod, const UniValue &params
 
     try {
         // Execute
-        return pcmd->actor(params, false);
+        return pcmd->actor(request);
     } catch (const std::exception& e) {
         throw JSONRPCError(RPC_MISC_ERROR, e.what());
     }

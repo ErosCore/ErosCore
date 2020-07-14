@@ -49,7 +49,7 @@ bool CWallet::AddDeterministicSeed(const uint256& seed)
         }
         strErr = "save zersseed to wallet";
     }
-    //the use case for this is no password set seed, mint dzPIV,
+    //the use case for this is no password set seed, mint dzERS,
 
     return error("s%: Failed to %s\n", __func__, strErr);
 }
@@ -93,6 +93,57 @@ bool CWallet::GetDeterministicSeed(const uint256& hashSeed, uint256& seedOut)
     }
 
     return error("%s: Failed to %s\n", __func__, strErr);
+}
+
+void CWallet::doZErsRescan(const CBlockIndex* pindex, const CBlock& block,
+        std::set<uint256>& setAddedToWallet, const Consensus::Params& consensus, bool fCheckZERS)
+{
+    //If this is a zapwallettx, need to read zers
+    if (fCheckZERS && consensus.NetworkUpgradeActive(pindex->nHeight, Consensus::UPGRADE_ZC)) {
+        std::list<CZerocoinMint> listMints;
+        BlockToZerocoinMintList(block, listMints, true);
+        CWalletDB walletdb(strWalletFile);
+
+        for (auto& m : listMints) {
+            if (IsMyMint(m.GetValue())) {
+                LogPrint(BCLog::LEGACYZC, "%s: found mint\n", __func__);
+                UpdateMint(m.GetValue(), pindex->nHeight, m.GetTxHash(), m.GetDenomination());
+
+                // Add the transaction to the wallet
+                for (auto& tx : block.vtx) {
+                    uint256 txid = tx.GetHash();
+                    if (setAddedToWallet.count(txid) || mapWallet.count(txid))
+                        continue;
+                    if (txid == m.GetTxHash()) {
+                        CWalletTx wtx(this, tx);
+                        wtx.nTimeReceived = block.GetBlockTime();
+                        wtx.SetMerkleBranch(block);
+                        AddToWallet(wtx, &walletdb);
+                        setAddedToWallet.insert(txid);
+                    }
+                }
+
+                //Check if the mint was ever spent
+                int nHeightSpend = 0;
+                uint256 txidSpend;
+                CTransaction txSpend;
+                if (IsSerialInBlockchain(GetSerialHash(m.GetSerialNumber()), nHeightSpend, txidSpend, txSpend)) {
+                    if (setAddedToWallet.count(txidSpend) || mapWallet.count(txidSpend))
+                        continue;
+
+                    CWalletTx wtx(this, txSpend);
+                    CBlockIndex* pindexSpend = chainActive[nHeightSpend];
+                    CBlock blockSpend;
+                    if (ReadBlockFromDisk(blockSpend, pindexSpend))
+                        wtx.SetMerkleBranch(blockSpend);
+
+                    wtx.nTimeReceived = pindexSpend->nTime;
+                    AddToWallet(wtx, &walletdb);
+                    setAddedToWallet.emplace(txidSpend);
+                }
+            }
+        }
+    }
 }
 
 //- ZC Mints (Only for regtest)
@@ -252,10 +303,14 @@ bool CWallet::CreateZerocoinMintTransaction(const CAmount nValue,
     // calculate fee
     CAmount nTotalValue = nValue + Params().GetConsensus().ZC_MinMintFee * txNew.vout.size();
 
+    // Get the available coins
+    std::vector<COutput> vAvailableCoins;
+    AvailableCoins(&vAvailableCoins, coinControl);
+
     CAmount nValueIn = 0;
     std::set<std::pair<const CWalletTx*, unsigned int> > setCoins;
     // select UTXO's to use
-    if (!SelectCoinsToSpend(nTotalValue, setCoins, nValueIn, coinControl)) {
+    if (!SelectCoinsToSpend(vAvailableCoins, nTotalValue, setCoins, nValueIn, coinControl)) {
         strFailReason = _("Insufficient or insufficient confirmed funds, you might need to wait a few minutes and try again.");
         return false;
     }

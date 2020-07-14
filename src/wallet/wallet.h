@@ -295,7 +295,7 @@ public:
     // Staker status (last hashed block and time)
     CStakerStatus* pStakerStatus = nullptr;
 
-    // User-defined fee PIV/kb
+    // User-defined fee ERS/kb
     bool fUseCustomFee;
     CAmount nCustomFee;
 
@@ -355,7 +355,7 @@ public:
                         int nWatchonlyConfig            = 1
                         ) const;
     //! >> Available coins (spending)
-    bool SelectCoinsToSpend(const CAmount& nTargetValue, std::set<std::pair<const CWalletTx*, unsigned int> >& setCoinsRet, CAmount& nValueRet, const CCoinControl* coinControl = nullptr, AvailableCoinsType coin_type = ALL_COINS, bool useIX = true, bool fIncludeColdStaking = false, bool fIncludeDelegated = true) const;
+    bool SelectCoinsToSpend(const std::vector<COutput>& vAvailableCoins, const CAmount& nTargetValue, std::set<std::pair<const CWalletTx*, unsigned int> >& setCoinsRet, CAmount& nValueRet, const CCoinControl* coinControl = nullptr) const;
     bool SelectCoinsMinConf(const CAmount& nTargetValue, int nConfMine, int nConfTheirs, std::vector<COutput> vCoins, std::set<std::pair<const CWalletTx*, unsigned int> >& setCoinsRet, CAmount& nValueRet) const;
     //! >> Available coins (staking)
     bool StakeableCoins(std::vector<COutput>* pCoins = nullptr);
@@ -365,7 +365,8 @@ public:
     std::map<CTxDestination, std::vector<COutput> > AvailableCoinsByAddress(bool fConfirmed = true, CAmount maxCoinValue = 0);
 
     /// Get 10000 ERS output and keys which can be used for the Masternode
-    bool GetMasternodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet, std::string strTxHash, std::string strOutputIndex);
+    bool GetMasternodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet,
+            CKey& keyRet, std::string strTxHash, std::string strOutputIndex, std::string& strError);
     /// Extract txin information and keys from output
     bool GetVinAndKeysFromOutput(COutput out, CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet, bool fColdStake = false);
 
@@ -430,8 +431,10 @@ public:
      */
     int64_t IncOrderPosNext(CWalletDB* pwalletdb = NULL);
 
+    bool GetLabelDestination(CTxDestination& dest, const std::string& label, bool bForceNew = false);
     void MarkDirty();
-    bool AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet, CWalletDB* pwalletdb);
+    bool AddToWallet(const CWalletTx& wtxIn, CWalletDB* pwalletdb = nullptr);
+    bool LoadToWallet(const CWalletTx& wtxIn);
     void SyncTransaction(const CTransaction& tx, const CBlock* pblock);
     bool AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pblock, bool fUpdate);
     void EraseFromWallet(const uint256& hash);
@@ -460,6 +463,7 @@ public:
     CAmount GetUnconfirmedWatchOnlyBalance() const;
     CAmount GetImmatureWatchOnlyBalance() const;
     CAmount GetLockedWatchOnlyBalance() const;
+    CAmount GetLegacyBalance(const isminefilter& filter, int minDepth, const std::string* account) const;
     bool FundTransaction(CMutableTransaction& tx, CAmount &nFeeRet, bool overrideEstimatedFeeRate, const CFeeRate& specificFeeRate, int& nChangePosInOut, std::string& strFailReason, bool includeWatching, bool lockUnspents, const CTxDestination& destChange = CNoDestination());
     /**
      * Create a new transaction paying the recipients with a set of coins
@@ -524,7 +528,8 @@ public:
     std::set<std::set<CTxDestination> > GetAddressGroupings();
     std::map<CTxDestination, CAmount> GetAddressBalances();
 
-    std::set<CTxDestination> GetAccountAddresses(std::string strAccount) const;
+    std::set<CTxDestination> GetLabelAddresses(const std::string& label) const;
+    void DeleteLabel(const std::string& label);
 
     bool GetBudgetSystemCollateralTX(CWalletTx& tx, uint256 hash, bool useIX);
     bool GetBudgetFinalizationCollateralTX(CWalletTx& tx, uint256 hash, bool useIX); // Only used for budget finalization
@@ -556,6 +561,7 @@ public:
     bool HasDelegator(const CTxOut& out) const;
 
     std::string purposeForAddress(const CTxDestination& address) const;
+    const std::string& GetAccountName(const CScript& scriptPubKey) const;
 
     bool UpdatedTransaction(const uint256& hashTx);
 
@@ -606,6 +612,9 @@ public:
     bool GetDeterministicSeed(const uint256& hashSeed, uint256& seed);
     bool AddDeterministicSeed(const uint256& seed);
 
+    // Par of the tx rescan process
+    void doZErsRescan(const CBlockIndex* pindex, const CBlock& block, std::set<uint256>& setAddedToWallet, const Consensus::Params& consensus, bool fCheckZERS);
+
     //- ZC Mints (Only for regtest)
     std::string MintZerocoin(CAmount nValue, CWalletTx& wtxNew, std::vector<CDeterministicMint>& vDMints, const CCoinControl* coinControl = NULL);
     std::string MintZerocoinFromOutPoint(CAmount nValue, CWalletTx& wtxNew, std::vector<CDeterministicMint>& vDMints, const std::vector<COutPoint> vOutpts);
@@ -637,7 +646,7 @@ public:
     std::map<libzerocoin::CoinDenomination, CAmount> GetMyZerocoinDistribution() const;
 
     // zERS wallet
-    CzERSWallet* zwalletMain;
+    CzERSWallet* zwalletMain{nullptr};
     std::unique_ptr<CzERSTracker> zersTracker{nullptr};
     void setZWallet(CzERSWallet* zwallet);
     CzERSWallet* getZWallet();
@@ -920,8 +929,6 @@ public:
         std::string& strSentAccount,
         const isminefilter& filter) const;
 
-    void GetAccountAmounts(const std::string& strAccount, CAmount& nReceived, CAmount& nSent, CAmount& nFee, const isminefilter& filter) const;
-
     bool IsFromMe(const isminefilter& filter) const;
 
     bool InMempool() const;
@@ -931,8 +938,6 @@ public:
 
     bool IsTrusted() const;
     bool IsTrusted(int& nDepth, bool& fConflicted) const;
-
-    bool WriteToDisk(CWalletDB *pwalletdb);
 
     int64_t GetTxTime() const;
     void UpdateTimeSmart();
@@ -997,7 +1002,7 @@ public:
 
 
 /**
- * Account information.
+ * DEPRECATED Account information.
  * Stored in wallet with key "acc"+string account name.
  */
 class CAccount
@@ -1029,7 +1034,7 @@ public:
 
 
 /**
- * Internal transfers.
+ * DEPRECATED Internal transfers.
  * Database key is acentry<account><counter>.
  */
 class CAccountingEntry

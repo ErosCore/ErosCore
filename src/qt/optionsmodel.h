@@ -89,6 +89,7 @@ public:
     bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() { return fCoinControlFeatures; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
+    const QString& getLang() { return language; }
 
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
@@ -134,11 +135,6 @@ private:
 
 Q_SIGNALS:
     void displayUnitChanged(int unit);
-    void zeromintEnableChanged(bool);
-    void zeromintAddressesChanged(bool);
-    void zeromintPercentageChanged(int);
-    void preferredDenomChanged(int);
-    void anonymizeErosAmountChanged(int);
     void coinControlFeaturesChanged(bool);
     void showHideColdStakingScreen(bool);
     void hideChartsChanged(bool);

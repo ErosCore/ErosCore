@@ -210,9 +210,10 @@ void RPCExecutor::requestCommand(const QString& command)
         std::string strPrint;
         // Convert argument list to JSON objects in method-dependent way,
         // and pass it along with the method name to the dispatcher.
-        UniValue result = tableRPC.execute(
-                args[0],
-                RPCConvertValues(args[0], std::vector<std::string>(args.begin() + 1, args.end())));
+        JSONRPCRequest req;
+        req.params = RPCConvertValues(args[0], std::vector<std::string>(args.begin() + 1, args.end()));
+        req.strMethod = args[0];
+        UniValue result = tableRPC.execute(req);
 
         // Format result reply
         if (result.isNull())
@@ -249,6 +250,8 @@ SettingsConsoleWidget::SettingsConsoleWidget(EROSGUI* _window, QWidget *parent) 
     // Containers
     setCssProperty({ui->left, ui->messagesWidget}, "container");
     ui->left->setContentsMargins(10,10,10,10);
+    ui->messagesWidget->setReadOnly(true);
+    ui->messagesWidget->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse);
 
     // Title
     setCssTitleScreen(ui->labelTitle);
