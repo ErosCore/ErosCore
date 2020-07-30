@@ -4,6 +4,7 @@
         <file alias="en">locale/eros_en.qm</file>
         <file alias="en_US">locale/eros_en_US.qm</file>
         <file alias="es">locale/eros_es.qm</file>
+        <file alias="es_ES">locale/eros_es_ES.qm</file>
         <file alias="fr_FR">locale/eros_fr_FR.qm</file>
         <file alias="hr_HR">locale/eros_hr_HR.qm</file>
         <file alias="it">locale/eros_it.qm</file>

@@ -616,17 +616,11 @@ void TopBar::updateDisplayUnit()
         int displayUnitPrev = nDisplayUnit;
         nDisplayUnit = walletModel->getOptionsModel()->getDisplayUnit();
         if (displayUnitPrev != nDisplayUnit)
-            updateBalances(walletModel->getBalance(), walletModel->getUnconfirmedBalance(), walletModel->getImmatureBalance(),
-                           walletModel->getZerocoinBalance(), walletModel->getUnconfirmedZerocoinBalance(), walletModel->getImmatureZerocoinBalance(),
-                           walletModel->getWatchBalance(), walletModel->getWatchUnconfirmedBalance(), walletModel->getWatchImmatureBalance(),
-                           walletModel->getDelegatedBalance(), walletModel->getColdStakedBalance());
+            updateBalances(walletModel->GetWalletBalances());
     }
 }
 
-void TopBar::updateBalances(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
-                            const CAmount& zerocoinBalance, const CAmount& unconfirmedZerocoinBalance, const CAmount& immatureZerocoinBalance,
-                            const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance,
-                            const CAmount& delegatedBalance, const CAmount& coldStakedBalance)
+void TopBar::updateBalances(const interfaces::WalletBalances& newBalance)
 {
     // Locked balance. //TODO move this to the signal properly in the future..
     CAmount nLockedBalance = 0;
@@ -635,16 +629,16 @@ void TopBar::updateBalances(const CAmount& balance, const CAmount& unconfirmedBa
     }
     ui->labelTitle1->setText(nLockedBalance > 0 ? tr("Available (Locked included)") : tr("Available"));
 
-    // PIV Total
-    QString totalErs = GUIUtil::formatBalance(balance, nDisplayUnit);
+    // ERS Total
+    QString totalErs = GUIUtil::formatBalance(newBalance.balance, nDisplayUnit);
 
-    // PIV
+    // ERS
     // Top
     ui->labelAmountTopErs->setText(totalErs);
     // Expanded
     ui->labelAmountErs->setText(totalErs);
-    ui->labelPendingErs->setText(GUIUtil::formatBalance(unconfirmedBalance, nDisplayUnit));
-    ui->labelImmatureErs->setText(GUIUtil::formatBalance(immatureBalance, nDisplayUnit));
+    ui->labelPendingErs->setText(GUIUtil::formatBalance(newBalance.unconfirmed_balance, nDisplayUnit));
+    ui->labelImmatureErs->setText(GUIUtil::formatBalance(newBalance.immature_balance, nDisplayUnit));
 }
 
 void TopBar::resizeEvent(QResizeEvent *event)

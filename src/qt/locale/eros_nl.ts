@@ -6,10 +6,6 @@
         <translation>Dialoog</translation>
     </message>
     <message>
-        <source>My Address</source>
-        <translation>Mijn Adres</translation>
-    </message>
-    <message>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
@@ -22,8 +18,8 @@
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
+        <source>SAVE</source>
+        <translation>Opslaan</translation>
     </message>
 </context>
 <context>
@@ -33,16 +29,8 @@
         <translation>Dialoog</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>CANCEL</source>
         <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
     </message>
     <message>
         <source>Edit Contact</source>
@@ -51,10 +39,6 @@
     <message>
         <source>Set a label for the selected address</source>
         <translation>Stel een label in voor het geselecteerde adres</translation>
-    </message>
-    <message>
-        <source>Enter a name for the address (e.g Exchange)</source>
-        <translation>Voeg een naam toe bij het behorende adres (bv, Exchange)</translation>
     </message>
     <message>
         <source>SAVE</source>
@@ -211,28 +195,12 @@
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>Send</source>
-        <translation>Zenden</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>NB</translation>
-    </message>
-    <message>
         <source>Contact name</source>
         <translation>Contactpersoon</translation>
     </message>
     <message>
         <source>Enter address</source>
         <translation>Voeg adres toe</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
     </message>
     <message>
         <source>Contacts</source>
@@ -245,14 +213,6 @@
     <message>
         <source>No contacts yet</source>
         <translation>Nog geen contacten</translation>
-    </message>
-    <message>
-        <source>e.g. John Doe</source>
-        <translation>bv. Jan Jansen</translation>
-    </message>
-    <message>
-        <source>Enter EROS address</source>
-        <translation>Voer EROS adres in</translation>
     </message>
     <message>
         <source>SAVE</source>
@@ -327,7 +287,7 @@ Weet u het zeker?</translation>
     </message>
     <message>
         <source>PushButton</source>
-        <translation>Druk Knop</translation>
+        <translation>DrukKnop</translation>
     </message>
     <message>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
@@ -380,20 +340,12 @@ voor bewijs van Inzet</translation>
         <translation>Als u uw portemonnee versleutelt en uw wachtwoord vergeet, zal u</translation>
     </message>
     <message>
-        <source>LOSE ALL OF YOUR ERS</source>
-        <translation>AL UW ERS VERLIEZEN</translation>
-    </message>
-    <message>
         <source>ENCRYPT</source>
         <translation>Versleutelen</translation>
     </message>
     <message>
         <source>CANCEL</source>
         <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>WARNING: The Caps Lock key is on!</source>
-        <translation>Waarschuwing: De Caps Lock-toets staat aan!</translation>
     </message>
     <message>
         <source>EROS will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your ERSs from being stolen by malware infecting your computer.</source>
@@ -692,6 +644,10 @@ voor bewijs van Inzet</translation>
         <translation>gedelegeerd naar %1 voor cold staking</translation>
     </message>
     <message>
+        <source>Select All</source>
+        <translation>Selecteer Alles</translation>
+    </message>
+    <message>
         <source>no</source>
         <translation>nee</translation>
     </message>
@@ -720,10 +676,6 @@ voor bewijs van Inzet</translation>
         <translation>Dit label wordt rood, als een ontvanger een hoeveelheid kleiner dan %1 ontvangt.</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 uers per input.</source>
-        <translation>Kan +/-%1 uers per invoer variëren.</translation>
-    </message>
-    <message>
         <source>(no label)</source>
         <translation>(geen label)</translation>
     </message>
@@ -743,28 +695,12 @@ voor bewijs van Inzet</translation>
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>Title</source>
-        <translation>Tietel</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>Owner address (optional, if empty a new address will be created)</source>
         <translation>Eigenaarsadres (optioneel, indien leeg wordt er een nieuw adres aangemaakt)</translation>
     </message>
     <message>
         <source>Total Staking:</source>
         <translation>Totaal Staking:</translation>
-    </message>
-    <message>
-        <source>List of delegated balance by address</source>
-        <translation>Lijst van gedelegeerde balans gesorteerd op adres</translation>
-    </message>
-    <message>
-        <source>No balance delegated</source>
-        <translation>Geen balans gedelegeerd</translation>
     </message>
     <message>
         <source>Cold Staking</source>
@@ -837,6 +773,10 @@ voor je laten staken, terwijl je de sleutels veilig offline opslag bewaart.</tra
         <translation>Cold staking is uitgeschakeld</translation>
     </message>
     <message>
+        <source>Coin Control</source>
+        <translation>Munt Controle</translation>
+    </message>
+    <message>
         <source>Invalid entry</source>
         <translation>Ongeldige invoer</translation>
     </message>
@@ -879,10 +819,6 @@ Wil je verdergaan?</translation>
     <message>
         <source>Coins delegated</source>
         <translation>Gedelegeerde Munten</translation>
-    </message>
-    <message>
-        <source>You don't have any ERS to select.</source>
-        <translation>Je hebt geen ERS om te selecteren</translation>
     </message>
     <message>
         <source>Cannot perform operation, wallet locked</source>
@@ -968,14 +904,6 @@ address</source>
         <source>Form</source>
         <translation>Formulier</translation>
     </message>
-    <message>
-        <source>Bob Allen</source>
-        <translation>Bob Allen</translation>
-    </message>
-    <message>
-        <source>DN6i46dytMPVhV1JMGZFuQBh7BZZ6nNLox</source>
-        <translation>DN6i46dytMPVhV1JMGZFuQBh7BZZ6nNLox</translation>
-    </message>
 </context>
 <context>
     <name>DashboardWidget</name>
@@ -988,36 +916,12 @@ address</source>
         <translation>Transacties</translation>
     </message>
     <message>
-        <source>You can see here the history of your account</source>
-        <translation>U kunt hier de geschiedenis van uw account bekijken</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>Waarschuwing</translation>
-    </message>
-    <message>
-        <source>No transactions</source>
-        <translation>Geen transacties</translation>
-    </message>
-    <message>
         <source>Staking Rewards</source>
         <translation>Staking Beloningen</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>Staking statistics</source>
         <translation>Staking statistieken</translation>
-    </message>
-    <message>
-        <source>ERS</source>
-        <translation>ERS</translation>
-    </message>
-    <message>
-        <source>zERS</source>
-        <translation>zERS</translation>
     </message>
     <message>
         <source>Sort by</source>
@@ -1040,15 +944,7 @@ address</source>
         <translation>Filter volgens</translation>
     </message>
     <message>
-        <source>LabelText</source>
-        <translation>LabelText</translation>
-    </message>
-    <message>
-        <source>You can view your account's history</source>
-        <translation>U kunt de geschiedenis van uw account bekijken</translation>
-    </message>
-    <message>
-        <source>Amount of ERS staked.</source>
+        <source>Amount of ERS and zERS staked.</source>
         <translation>Hoeveelheid aan gestaked ERS en zERS.</translation>
     </message>
     <message>
@@ -1058,10 +954,6 @@ address</source>
     <message>
         <source>No transactions yet</source>
         <translation>Nog geen transacties</translation>
-    </message>
-    <message>
-        <source>How to get ERS or zERS</source>
-        <translation>Hoe ERS of zERS verkrijgen</translation>
     </message>
     <message>
         <source>You can verify the staking activity in the status bar at the top right of the wallet.
@@ -1101,20 +993,12 @@ Het zal automatisch starten zodra de portemonnee voldoende bevestigingen heeft o
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>Transaction Details</source>
-        <translation>Transactie details</translation>
-    </message>
-    <message>
-        <source>Text Label</source>
-        <translation>Text Label</translation>
+        <source>OK</source>
+        <translation>Akkoord</translation>
     </message>
     <message>
         <source>CANCEL</source>
         <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>SAVE</source>
-        <translation>Opslaan</translation>
     </message>
 </context>
 <context>
@@ -1364,7 +1248,7 @@ Het zal automatisch starten zodra de portemonnee voldoende bevestigingen heeft o
         <source>Form</source>
         <translation>Formulier</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>MasterNodeWizardDialog</name>
     <message>
@@ -1432,18 +1316,6 @@ Het zal automatisch starten zodra de portemonnee voldoende bevestigingen heeft o
         <translation>Voer IP-adres in</translation>
     </message>
     <message>
-        <source>CANCEL</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
-    </message>
-    <message>
-        <source>e.g user_masternode</source>
-        <translation>e.g user_masternode</translation>
-    </message>
-    <message>
         <source>NEXT</source>
         <translation>VOLGENDE</translation>
     </message>
@@ -1507,14 +1379,6 @@ Het zal automatisch starten zodra de portemonnee voldoende bevestigingen heeft o
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>NB</translation>
     </message>
     <message>
         <source>Start All</source>
@@ -1615,6 +1479,10 @@ Gelieve nog enkele minuten te wachten (het onderpand van een masternode vereist 
         <translation>Remote Masternodegegevens</translation>
     </message>
     <message>
+        <source>What is a Masternode?</source>
+        <translation>Wat is een Masternode?</translation>
+    </message>
+    <message>
         <source>You are just about to export the required data to run a Masternode
 on a remote server to your clipboard.
 
@@ -1663,10 +1531,6 @@ Weet je het zeker?</translation>
         <translation>Kan geen Masternode controller aanmaken, portemonnee vergrendeld</translation>
     </message>
     <message>
-        <source>Not enough balance to create a masternode, 10,000 ERS required.</source>
-        <translation>Niet genoeg balans om een masternode te creëren, 10,000 ERS vereist.</translation>
-    </message>
-    <message>
         <source>Error creating masternode</source>
         <translation>Error in het aanmaken van de masternode</translation>
     </message>
@@ -1686,16 +1550,8 @@ Weet je het zeker?</translation>
         <translation>Publieke Sleutel:</translation>
     </message>
     <message>
-        <source>492526e7fa3c810b35016...40a5df85ee227ab00b1156994</source>
-        <translation>492526e7fa3c810b35016...40a5df85ee227ab00b1156994</translation>
-    </message>
-    <message>
         <source>Address: </source>
         <translation>Adres:</translation>
-    </message>
-    <message>
-        <source>127.0.0.2:43223</source>
-        <translation>127.0.0.2:43223</translation>
     </message>
     <message>
         <source>Collaterall tx id:</source>
@@ -1714,31 +1570,15 @@ Weet je het zeker?</translation>
         <translation>Status:</translation>
     </message>
     <message>
-        <source>MISSING</source>
-        <translation>ONTBREKEND</translation>
-    </message>
-    <message>
         <source>Export data to run the Masternode on a remote server</source>
         <translation>Exporteer gegevens om de Masternode op een externe server uit te voeren</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>MyAddressRow</name>
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>Savings</source>
-        <translation>Besparingen</translation>
-    </message>
-    <message>
-        <source>Jan. 19, 2019</source>
-        <translation>Jan. 19, 2019</translation>
-    </message>
-    <message>
-        <source>DN6i46dytMPVhV1JMGZFuQBh7BZZ6nNLox</source>
-        <translation>DN6i46dytMPVhV1JMGZFuQBh7BZZ6nNLox</translation>
     </message>
 </context>
 <context>
@@ -1804,10 +1644,6 @@ Weet je het zeker?</translation>
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
     </message>
 </context>
 <context>
@@ -1902,9 +1738,9 @@ Weet je het zeker?</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/pivx-project/pivx-project-translations</source>
+https://www.transifex.com/eros-project/eros-project-translations</source>
         <translation>Taal ontbreekt of vertaling onvolledig? Help om bij te dragen aan vertalingen:
-https://www.transifex.com/pivx-project/pivx-project-translations</translation>
+https://www.transifex.com/eros-project/eros-project-translations</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -2165,10 +2001,6 @@ Type: %3
 Adres: %4
 </translation>
     </message>
-    <message>
-        <source>A fatal error occurred. EROS can no longer continue safely and will quit.</source>
-        <translation>Een kritieke fout is opgelopen. EROS kan niet langer veilig uitgevoerd worden en zal afsluiten.</translation>
-    </message>
 </context>
 <context>
     <name>PaymentServer</name>
@@ -2277,131 +2109,6 @@ Adres: %4
     </message>
 </context>
 <context>
-    <name>PrivacyWidget</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Tietel</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation>Druk Knop</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>NB</translation>
-    </message>
-    <message>
-        <source>Privacy</source>
-        <translation>Privacy</translation>
-    </message>
-    <message>
-        <source>Convert</source>
-        <translation>Converteren</translation>
-    </message>
-    <message>
-        <source>Mint</source>
-        <translation>Munt</translation>
-    </message>
-    <message>
-        <source>Minting zERS anonymizes your ERS by removing any
-transaction history, making transactions untraceable </source>
-        <translation>Munten van zERS anonimiseert uw ERS door het verwijderen van eender welke
-transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</translation>
-    </message>
-    <message>
-        <source>Mint new zERS or convert back to ERS</source>
-        <translation>Munt nieuwe zERS of converteer deze terug in ERS</translation>
-    </message>
-    <message>
-        <source>Last zERS Movements</source>
-        <translation>Laatste zERS Bewegingen</translation>
-    </message>
-    <message>
-        <source>No transactions yet</source>
-        <translation>Nog geen transacties</translation>
-    </message>
-    <message>
-        <source>Mint zERS</source>
-        <translation>Munt zERS</translation>
-    </message>
-    <message>
-        <source>Enter amount of ERS to mint into zERS</source>
-        <translation>Vul de hoeveelheid ERS in die u omslaan in zERS</translation>
-    </message>
-    <message>
-        <source>Convert back to ERS</source>
-        <translation>Converteer terug naar ERS</translation>
-    </message>
-    <message>
-        <source>Enter amount of zERS to convert back into ERS</source>
-        <translation>Voer de hoeveelheed zERS in om terug te converteren naar ERS</translation>
-    </message>
-    <message>
-        <source>Zerocoin</source>
-        <translation>Zerocoin</translation>
-    </message>
-    <message>
-        <source>zERS is currently undergoing maintenance</source>
-        <translation>zERS ondergaat momenteel onderhoud</translation>
-    </message>
-    <message>
-        <source>You need to unlock the wallet to be able to %1 zERS</source>
-        <translation>Je moet de portemonnee ontgrendelen om in staat zijn om %1 zERS</translation>
-    </message>
-    <message>
-        <source>convert</source>
-        <translation>converteer</translation>
-    </message>
-    <message>
-        <source>mint</source>
-        <translation>munt</translation>
-    </message>
-    <message>
-        <source>Invalid value</source>
-        <translation>Ongeldige waarde</translation>
-    </message>
-    <message>
-        <source>zERS minted successfully</source>
-        <translation>zERS munting succesvol</translation>
-    </message>
-    <message>
-        <source>zERS converted back to ERS</source>
-        <translation>zERS terug geconverteerd naar ERS</translation>
-    </message>
-    <message>
-        <source>You don't have any ERS to select.</source>
-        <translation>Je hebt geen ERS om te selecteren</translation>
-    </message>
-    <message>
-        <source>Rescan Mints</source>
-        <translation>Muntingen opnieuw scannen</translation>
-    </message>
-    <message>
-        <source>Your zerocoin mints are going to be scanned from the blockchain from scratch</source>
-        <translation>Uw zerocoin muntingen zullen van de blockchain vanaf nul worden gescanned</translation>
-    </message>
-    <message>
-        <source>Reset Spent zERS</source>
-        <translation>Reset Besteedde zERS</translation>
-    </message>
-    <message>
-        <source>Your zerocoin spends are going to be scanned from the blockchain from scratch</source>
-        <translation>Uw zerocoin bestedingen zullen van de blockchain vanaf nul worden gescanned</translation>
-    </message>
-    <message>
-        <source>Total %1</source>
-        <translation>Totaal %1</translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
         <source>Amount</source>
@@ -2450,6 +2157,10 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
     <message>
         <source>%1 ms</source>
         <translation>%1 ms</translation>
+    </message>
+    <message>
+        <source>A fatal error occurred. EROS can no longer continue safely and will quit.</source>
+        <translation>Een kritieke fout is opgelopen. EROS kan niet langer veilig uitgevoerd worden en zal afsluiten.</translation>
     </message>
     <message>
         <source>EROS Core</source>
@@ -2510,10 +2221,6 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
     <message>
         <source>Contacts</source>
         <translation>Contacten</translation>
-    </message>
-    <message>
-        <source>Delegators</source>
-        <translation>Delegators</translation>
     </message>
     <message>
         <source>Staking Contacts</source>
@@ -2587,7 +2294,7 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <source>by Date</source>
         <translation>per Datum</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>RPCConsole</name>
     <message>
@@ -3002,20 +2709,12 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <translation>Dialoog</translation>
     </message>
     <message>
-        <source>Transaction Details</source>
-        <translation>Transactie details</translation>
-    </message>
-    <message>
-        <source>D7VFR83SQbiezrW72hjcWJtcfip5krte2Z </source>
-        <translation>D7VFR83SQbiezrW72hjcWJtcfip5krte2Z</translation>
+        <source>My Address</source>
+        <translation>Mijn Adres</translation>
     </message>
     <message>
         <source>CANCEL</source>
         <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
     </message>
 </context>
 <context>
@@ -3023,10 +2722,6 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
     </message>
     <message>
         <source>No address</source>
@@ -3047,14 +2742,6 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
     <message>
         <source>Receive</source>
         <translation>Ontvangen</translation>
-    </message>
-    <message>
-        <source>Scan the QR code or copy the address to receive ERS.</source>
-        <translation>Scan de QR code of kopieer het adres om ERS te ontvangen.</translation>
-    </message>
-    <message>
-        <source>No address </source>
-        <translation>Geen adres</translation>
     </message>
     <message>
         <source>No available address, try unlocking the wallet</source>
@@ -3147,24 +2834,12 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <translation>Dialoog</translation>
     </message>
     <message>
-        <source>New Request Payment</source>
-        <translation>Nieuw Betalingsverzoek</translation>
-    </message>
-    <message>
-        <source>Lorem ipsum dolor sit amet, consectur cling elit, sed do </source>
-        <translation>Lorem ipsum dolor sit amet, consectur cling elit, sed do </translation>
-    </message>
-    <message>
         <source>Amount</source>
         <translation>Bedrag</translation>
     </message>
     <message>
         <source>ERS</source>
         <translation>ERS</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
     </message>
     <message>
         <source>D7VFR83SQbiezrW72hjcWJtcfip5krte2Z </source>
@@ -3183,10 +2858,6 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>REQUEST</source>
-        <translation>VERZOEK</translation>
-    </message>
-    <message>
         <source>Label</source>
         <translation>Label</translation>
     </message>
@@ -3197,10 +2868,6 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
     <message>
         <source>New Payment Request</source>
         <translation>Nieuw Betalingsverzoek</translation>
-    </message>
-    <message>
-        <source>Instead of sharing only a EROS address, you can create a payment request, bundling up more information.</source>
-        <translation>In plaats van een EROS-adres te delen, kunt u een betalingsverzoek creëren dat meer informatie bundelt.</translation>
     </message>
     <message>
         <source>Enter a label for the address</source>
@@ -3230,7 +2897,11 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <source>Amount (optional)</source>
         <translation>Bedrag (optioneel)</translation>
     </message>
-</context>
+    <message>
+        <source>Invalid amount</source>
+        <translation>Ongeldige hoeveelheid</translation>
+    </message>
+    </context>
 <context>
     <name>SendChangeAddressDialog</name>
     <message>
@@ -3238,20 +2909,8 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <translation>Dialoog</translation>
     </message>
     <message>
-        <source>Transaction Details</source>
-        <translation>Transactie details</translation>
-    </message>
-    <message>
-        <source>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim.</source>
-        <translation>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim.</translation>
-    </message>
-    <message>
         <source>CANCEL</source>
         <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
     </message>
     <message>
         <source>Custom Change Address</source>
@@ -3273,20 +2932,12 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <source>Invalid address</source>
         <translation>Ongeldig adres</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>SendCustomFeeDialog</name>
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>Transaction Details</source>
-        <translation>Transactie details</translation>
-    </message>
-    <message>
-        <source>Customize the transaction fee at your to your liking, depending on the fee value your transaction will be included or not in the blockchain.</source>
-        <translation>Pas de transactiekosten naar wens aan, afhankelijk van de kostenwaarde die uw transactie wel of niet in de blockchain zal opnemen.</translation>
     </message>
     <message>
         <source>Recommended</source>
@@ -3309,16 +2960,8 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation>Akkoord</translation>
-    </message>
-    <message>
         <source>Customize Fee</source>
         <translation>Kost Aanpassen</translation>
-    </message>
-    <message>
-        <source>Customize the transaction fee, depending on the fee value your transaction might be included faster in the blockchain.</source>
-        <translation>Pas de transactie aan, afhankelijk van de kostenwaarde zal uw transactie mogelijks sneller opgenomen worden in de blockchain.</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -3344,10 +2987,6 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>Enter address</source>
         <translation>Voeg adres toe</translation>
     </message>
@@ -3359,56 +2998,8 @@ transactiegeschiedenis, waardoor transacties niet meer te traceren zijn</transla
 <context>
     <name>SendWidget</name>
     <message>
-        <source>Send</source>
-        <translation>Zenden</translation>
-    </message>
-    <message>
-        <source>You can transfer public coins (ERS) or private coins (zERS)</source>
-        <translation>Je kan publieke munten (ERS) of private munten (zERS) overdragen</translation>
-    </message>
-    <message>
-        <source>Select coin type to spend</source>
-        <translation>Selecteer munttype om te spenderen</translation>
-    </message>
-    <message>
-        <source>Amount</source>
-        <translation>Bedrag</translation>
-    </message>
-    <message>
-        <source>Customize fee</source>
-        <translation>Kosten aanpassen</translation>
-    </message>
-    <message>
-        <source>Clear all</source>
-        <translation>Alles wissen</translation>
-    </message>
-    <message>
-        <source>Add recipient</source>
-        <translation>Voeg bestemmeling toe</translation>
-    </message>
-    <message>
-        <source>Reset to default</source>
-        <translation>Terugzetten naar standaardinstelling</translation>
-    </message>
-    <message>
-        <source>Total to send</source>
-        <translation>Totaal te versturen</translation>
-    </message>
-    <message>
-        <source>Send ERS</source>
-        <translation>ERS Versturen</translation>
-    </message>
-    <message>
-        <source>Send zERS</source>
-        <translation>zERS Versturen</translation>
-    </message>
-    <message>
         <source>Total remaining from the selected UTXO</source>
         <translation>Totaal resterende van de geselecteerde UTXO</translation>
-    </message>
-    <message>
-        <source>Total remaining</source>
-        <translation>Totaal resterende</translation>
     </message>
     <message>
         <source>Warning!</source>
@@ -3429,10 +3020,6 @@ Wilt u verdergaan?</translation>
     <message>
         <source>Maximum amount of outputs reached</source>
         <translation>Maximum aantal uitvoeren bereikt</translation>
-    </message>
-    <message>
-        <source>EROS address or contact label</source>
-        <translation>EROS adres of contactlabel</translation>
     </message>
     <message>
         <source>Invalid entry, previous entries must be valid before add a new one</source>
@@ -3471,54 +3058,6 @@ Deze munten zullen niet langer cold-staked zijn.</translation>
         <translation>Transactie verstuurd</translation>
     </message>
     <message>
-        <source>Spend Zerocoin</source>
-        <translation>Besteed Zerocoin</translation>
-    </message>
-    <message>
-        <source>zERS is currently undergoing maintenance.</source>
-        <translation>zERS wordt momenteel onderhouden.</translation>
-    </message>
-    <message>
-        <source>Coin control mint not found</source>
-        <translation>Muntcontrole munting niet gevonden</translation>
-    </message>
-    <message>
-        <source>Sending %1 to address %2
-</source>
-        <translation>Versturen van %1 naar adres %2
-</translation>
-    </message>
-    <message>
-        <source>Sending %1 to addresses:
-%2</source>
-        <translation>Versturen van %1 naar adressen:
-%2</translation>
-    </message>
-    <message>
-        <source>zERS transaction sent!</source>
-        <translation>zERS transactie verzonden!</translation>
-    </message>
-    <message>
-        <source>Version 1 zERS require a security level of 100 to successfully spend.</source>
-        <translation>Versie 1 zERS vereist een beveiligingsniveau van 100 om succesvol te besteden.</translation>
-    </message>
-    <message>
-        <source>Too much inputs (</source>
-        <translation>Teveel invoer (</translation>
-    </message>
-    <message>
-        <source>) needed.
-Maximum allowed: </source>
-        <translation>) vereist.
-Maximaal toegestaan:</translation>
-    </message>
-    <message>
-        <source>
-Either mint higher denominations (so fewer inputs are needed) or reduce the amount to spend.</source>
-        <translation>
-Ofwel het munten van hogere denominaties (dus minder invoer nodig) of het te besteden bedrag verminderen.</translation>
-    </message>
-    <message>
         <source>Address label update failed for address: %1</source>
         <translation>Adreslabel bijwerken mislukt voor adres: %1</translation>
     </message>
@@ -3535,12 +3074,12 @@ Ofwel het munten van hogere denominaties (dus minder invoer nodig) of het te bes
         <translation>Aangepaste Kost %1</translation>
     </message>
     <message>
-        <source>You don't have any ERS to select.</source>
-        <translation>Je hebt geen ERS om te selecteren</translation>
+        <source>Coin Control</source>
+        <translation>Munt Controle</translation>
     </message>
     <message>
-        <source>You don't have any zERS in your balance to select.</source>
-        <translation>Je hebt geen zERS in je balans om te selecteren.</translation>
+        <source>Open URI</source>
+        <translation>URI openen</translation>
     </message>
     <message>
         <source>No contacts available, you can go to the contacts screen and add some there!</source>
@@ -3586,32 +3125,12 @@ Ofwel het munten van hogere denominaties (dus minder invoer nodig) of het te bes
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>Backup Wallet </source>
-        <translation>Wallet Back-uppen</translation>
-    </message>
-    <message>
         <source>Change Wallet Passphrase</source>
         <translation>Wijzig Portemonnee Wachtwoord</translation>
     </message>
     <message>
-        <source>This will decrypt the whole wallet data and encrypt it back with the new passphrase.
-Remember to write it down and store it safely, otherwise you might lose access to your funds.</source>
-        <translation>Dit zal de gehele portemonneegegevens decrypteren en zal opnieuw encrypteren met een nieuwe wachtwoordzin.
-Vergeet deze niet op te schrijven en veilig te bewaren, anders verlies je mogelijks de toegang tot uw geld.</translation>
-    </message>
-    <message>
         <source>Where</source>
         <translation>Waar</translation>
-    </message>
-    <message>
-        <source>Keep your wallet safe by doing regular backups and storing your backup file externally.
-This option creates a wallet.dat file that can be used to recover your whole balance (transactions and addresses) on another device.</source>
-        <translation>Bewaar uw portemonnee veilig door middel van regelmatige back-ups, bewaar uw back-upbestand extern.
-Deze optie maakt een wallet.dat bestand aan dat gebruikt kan worden om uw volledige saldo (transacties en adressen) van een ander apparaat terug te krijgen.</translation>
     </message>
     <message>
         <source>Select folder...</source>
@@ -3649,24 +3168,8 @@ Deze optie maakt een wallet.dat bestand aan dat gebruikt kan worden om uw volled
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation>Druk Knop</translation>
-    </message>
-    <message>
-        <source>Decrypt Address Result</source>
-        <translation>Decrypteer Adresresultaat</translation>
-    </message>
-    <message>
         <source>Import Address</source>
         <translation>Adres Importeren</translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation>Leegmaken</translation>
     </message>
     <message>
         <source>BIP38 Tool</source>
@@ -3691,10 +3194,6 @@ Deze optie maakt een wallet.dat bestand aan dat gebruikt kan worden om uw volled
     <message>
         <source>Passphrase</source>
         <translation>Wachtwoord</translation>
-    </message>
-    <message>
-        <source>Enter a passphrase </source>
-        <translation>Voer wachtwoord in</translation>
     </message>
     <message>
         <source>Decrypted address result</source>
@@ -3812,20 +3311,12 @@ Deze optie maakt een wallet.dat bestand aan dat gebruikt kan worden om uw volled
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>Console</source>
         <translation>Console</translation>
     </message>
     <message>
         <source>Console input</source>
         <translation>Console invoer</translation>
-    </message>
-    <message>
-        <source>Command Line Options </source>
-        <translation>Command Line Opties</translation>
     </message>
     <message>
         <source>Open Debug File</source>
@@ -3863,10 +3354,6 @@ Controleer of u een vooraf bepaalde teksteditor hebt geïnstalleerd.</translatio
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
     </message>
     <message>
         <source>Hide stake charts in the dashboard</source>
@@ -4031,54 +3518,12 @@ Er was een fout opgetreden tijdens het opslaan van deze adreslijst naar %1. Prob
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation>Druk Knop</translation>
-    </message>
-    <message>
         <source>1) What is EROS?</source>
         <translation>1) Wat is EROS?</translation>
     </message>
     <message>
         <source>2) Why are my ERS unspendable?</source>
         <translation>2) Waarom is mijn ERS niet besteedbaar?</translation>
-    </message>
-    <message>
-        <source>3) EROS privacy? What is Zerocoin (zERS)?</source>
-        <translation>3) EROS privacy? Wat is Zerocoin (zERS)?</translation>
-    </message>
-    <message>
-        <source>4) Why are my zERS unspendable?</source>
-        <translation>4) Waarom is mijn zERS niet besteedbaar?</translation>
-    </message>
-    <message>
-        <source>5) Why did my wallet convert the balance
-    into zERS automatically?</source>
-        <translation>5) Waarom heeft mijn portemonnee mijn balans
-    automatisch naar zERS geconverteerd?</translation>
-    </message>
-    <message>
-        <source>6) How do I receive ERS/zERS?</source>
-        <translation>6) Hoe ontvang ik ERS/zERS?</translation>
-    </message>
-    <message>
-        <source>7) How do I stake ERS/zERS?</source>
-        <translation>7) Hoe stake ik ERS/zERS?</translation>
-    </message>
-    <message>
-        <source>8) Where I should go if I need support?</source>
-        <translation>8) Waar moet ik heen gaan als ik ondersteuning nodig heb?</translation>
-    </message>
-    <message>
-        <source>9) What is a Masternode?</source>
-        <translation>9) Wat is een Masternode?</translation>
-    </message>
-    <message>
-        <source>10) What is a Masternode Controller?</source>
-        <translation>10) Wat is een Masternode Controller?</translation>
     </message>
     <message>
         <source>1</source>
@@ -4151,188 +3596,16 @@ Er was een fout opgetreden tijdens het opslaan van deze adreslijst naar %1. Prob
         <translation>3</translation>
     </message>
     <message>
-        <source>EROS privacy? What is Zerocoin (zERS)?</source>
-        <translation>EROS privacy? Wat is Zerocoin (zERS)?</translation>
-    </message>
-    <message>
-        <source>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           zERS is an optional privacy-centric method of coin mixing on the
-                           EROS blockchain. Basically all your transactions cannot be tracked
-                           on to any block explorer. You can read more about the technicals in the
-                           &lt;a style='color: #b088ff' href='https://erosblockchain.com/zers/'&gt;
-                           "EROS Zerocoin (zERS) Technical Paper"&lt;/a&gt;.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </source>
-        <translation>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           zERS is een optionele privacy-gerichte methode om munten te mengen op de
-                           EROS blockchain. In principe kunnen al uw transacties niet worden gevolgd
-                           op enige block explorer. U kunt meer lezen over de technische gegevens in de
-                           &lt;a style='color: #b088ff' href='https://erosblockchain.com/zers/'&gt;
-                           "EROS Zerocoin (zERS) Technische Paper"&lt;/a&gt;.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </translation>
-    </message>
-    <message>
         <source>4</source>
         <translation>4</translation>
-    </message>
-    <message>
-        <source>Why are my zERS unspendable?</source>
-        <translation>Waarom is mijn zERS niet besteedbaar?</translation>
-    </message>
-    <message>
-        <source>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           After minting, zERS will require 20 confirmations as well as 1
-                           additional mint of the same denomination on the network to
-                           become eligible for spending.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </source>
-        <translation>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           Na het muntenheeft zERS 20 bevestigingen nodig, evenals 1
-                          extra munt van dezelfde denominatie op het netwerk om
-                           in aanmerking komen voor uitgaven.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </translation>
     </message>
     <message>
         <source>5</source>
         <translation>5</translation>
     </message>
     <message>
-        <source>Why did my wallet convert the balance into zERS automatically?</source>
-        <translation>Waarom heeft mijn portemonnee mijn balans automatisch naar zERS geconverteerd?</translation>
-    </message>
-    <message>
-        <source>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           By default the EROS wallet will convert 10% of your entire ERS
-                           balance to zERS to assist the network. If you do not wish to
-                           stake zERS or take advantage of the privacy benefit it brings,
-                           you can disable the automatic minting in your EROS wallet by
-                           going to Settings-&gt;Options and deselecting “Enable zERS Automint”.
-                           If you are not making use of the EROS-QT or GUI you can simply open
-                           your eros.conf file and add &lt;i&gt;enablezeromint=0&lt;/i&gt; Without the quotation
-                           marks and restart your wallet to disable automint.&lt;/p&gt;
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           You can read more about zERS in the
-                           &lt;a style='color: #b088ff' href='https://erosblockchain.com/zers/'&gt; "EROS Zerocoin (zERS) Technical Paper"&lt;/a&gt;.
-                           If you would like to keep and stake your zERS, please read the "How do I stake"
-                           section of the FAQ below.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </source>
-        <translation>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           Standaard zal de EROS portemonnee 10% van uw gehele ERS-balans omzetten
-                          naar zERS om het netwerk te helpen. Als u niet wenst om
-                           zERS te staken of voordeel te halen uit het privacyvoordeel dat dit oplevert,
-                           kan je deze automatische omzetting uitschakelen in je EROS portemonnee door
-                           naar Instellingen &gt; Opties te gaan en dan “Schakel zERS Automuntering in” te deselecteren.
-                           Als je geen gebruik maakt van de EROS-QT of GUI kan je simpelweg
-                           je eros.conf bestand openen en er &lt;i&gt;"enablezeromint=0" aan toevoegen&lt;/i&gt; Zonder de aanhaling
-                           en je portemonnee herstarten om automuntering uit te schakelen.&lt;/p&gt;
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           Je kan meer lezen over zERS in de
-                           &lt;a style='color: #b088ff' href='https://erosblockchain.com/zers/'&gt; "EROS Zerocoin (zERS) Technische Paper"&lt;/a&gt;.
-                           Als u uw zERS wilt behouden en staken, lees dan de "Hoe stake ik"
-                           sectie in onderstaande FAQ.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </translation>
-    </message>
-    <message>
         <source>6</source>
         <translation>6</translation>
-    </message>
-    <message>
-        <source>How do I receive ERS/zERS?</source>
-        <translation>Hoe ontvang ik ERS/zERS?</translation>
-    </message>
-    <message>
-        <source>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           zERS can be spent and sent to any EROS address. The receiver will
-                           receive standard EROS but the origin of the EROS is anonymized by the zERS Protocol.
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           If you want more zERS you will need to mint your balance in the “Privacy” tab.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </source>
-        <translation>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           zERS kan worden uitgegeven en verzonden naar elk EROS-adres. De ontvanger zal
-                           gewone EROS ontvangen, maar de oorsprong van de EROS is geanonimiseerd door het zERS-protocol
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           Als u meer zERS wilt, moet u uw balans op mint zetten in de "Privacy" tab.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </translation>
-    </message>
-    <message>
-        <source>7</source>
-        <translation>7</translation>
-    </message>
-    <message>
-        <source>How do I stake ERS/zERS?</source>
-        <translation>Hoe stake ik ERS/zERS?</translation>
-    </message>
-    <message>
-        <source>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           To Stake EROS:
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           &lt;ol&gt;&lt;li&gt;
-                           Make sure your wallet is completely synchronized and you are using the latest release.
-                           &lt;li&gt;
-                           You must have a balance of EROS with a minimum of 600 confirmations.
-                           &lt;li&gt;
-                           Your wallet must stay online and be unlocked for staking purposes.
-                           &lt;li&gt;
-                           Once all those steps are followed staking should be enabled.
-                           &lt;li&gt;
-                           You can see the status of staking in the wallet by mousing over the package icon in the row on the top left of the wallet interface. There package will be lit up and will state "Staking Enabled" to indicate it is staking.  Using the command line interface (eros-cli); the command &lt;i&gt;getstakingstatus&lt;/i&gt; will confirm that staking is active.
-                           &lt;/li&gt;&lt;/ol&gt;
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           To Stake zERS:
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           &lt;ol&gt;&lt;li&gt;
-                           Make sure your wallet is completely synchronized and you are using the latest release.
-                           &lt;li&gt;
-                           Your newly minted or existing zERS balance must have a minimum of 200 confirmations.
-                           &lt;li&gt;
-                           Your wallet must stay online and be unlocked for anonymization and staking purposes.
-                           Staking should now be enabled.
-                           &lt;/li&gt;&lt;/ol&gt;
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </source>
-        <translation>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           Om EROS te Staken:
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           &lt;ol&gt;&lt;li&gt;
-                           Zorg ervoor dat uw portemonnee volledig gesynchroniseerd is en dat u de laatste versie gebruikt.
-                           &lt;li&gt;
-                           U moet een saldo van EROS hebben met een minimum van 600 bevestigingen.
-                           &lt;li&gt;
-                           Uw portemonnee moet online blijven en ontgrendeld zijn voor staking-doeleinden.
-                           &lt;li&gt;
-                           Zodra al deze stappen gevolgd zijn, zal het staken worden ingeschakeld.
-                           &lt;li&gt;
-                           U kunt de status van de staking in de portemonnee zien door op het pictogram in de rij linksboven in de portemonnee-interface te bewegen. Het pakket zal oplichten en zal "Staking Ingeschakeld" aangeven om aan te geven dat het pakket in de portemonnee is geplaatst. Met behulp van de opdrachtregel-interface (eros-cli); het commando &lt;i&gt;getstakingstatus&lt;/i&gt; zal bevestigen dat de staking actief is.
-                           &lt;/li&gt;&lt;/ol&gt;
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           Om zERS te Staken:
-                           &lt;/p&gt;&lt;p align="justify"&gt;
-                           &lt;ol&gt;&lt;li&gt;
-                            Zorg ervoor dat uw portemonnee volledig gesynchroniseerd is en dat u de laatste versie gebruikt.
-                           &lt;li&gt;
-                           Uw nieuw gemunte of bestaande zERS balans moet minimaal 200 bevestigingen hebben.
-                           &lt;li&gt;
-                           Uw portemonnee moet online blijven en worden ontgrendeld voor anonimisering en staking-doeleinden.
-                           Het Staken zou nu ingeschakeld moeten zijn
-                           &lt;/li&gt;&lt;/ol&gt;
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </translation>
     </message>
     <message>
         <source>Where should I go if I need support?</source>
@@ -4349,36 +3622,6 @@ Er was een fout opgetreden tijdens het opslaan van deze adreslijst naar %1. Prob
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;A Masternode Controller wallet is where the 10,000 ERS collateral can reside during a Controller-Remote masternode setup. It is a wallet that can activate the remote masternode wallet(s) and allows you to keep your collateral coins offline while the remote masternode remains online. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;Een Masternode Controller portemonnee is waar de 10.000 ERS onderpand zich kan bevinden tijdens een Controller-Remote masternode setup. Het is een portemonnee die de remote masternode portemonnee(s) kan activeren en waarmee u uw ondergepande munten offline kunt houden terwijl de remote masternode online blijft. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>8</source>
-        <translation>8</translation>
-    </message>
-    <message>
-        <source>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           We have support channels in most of our official chat groups, for example
-                           &lt;a style='color: #b088ff' href='https://discord.erosblockchain.com'&gt;
-                           #support in our Discord&lt;/a&gt;.
-                           If you prefer to submit a ticket, One can be
-                           &lt;a style='color: #b088ff' href='https://EROS.freshdesk.com'&gt;
-                           our Freshdesk support site&lt;/a&gt;.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </source>
-        <translation>
-                           &lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align="justify"&gt;
-                           We hebben ondersteuningskanalen in de meeste van onze officiële chatgroepen, bijvoorbeeld
-                           &lt;a style='color: #b088ff' href='https://discord.erosblockchain.com'&gt;
-                           #support in onze Discord&lt;/a&gt;.
-                           Als u liever een ticket indient, kan men dat
-                           &lt;a style='color: #b088ff' href='https://EROS.freshdesk.com'&gt;
-                           op onze Freshdesk supportsite&lt;/a&gt;.
-                           &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                         </translation>
-    </message>
-    <message>
-        <source>9</source>
-        <translation>9</translation>
     </message>
     <message>
         <source>
@@ -4465,10 +3708,6 @@ Er was een fout opgetreden tijdens het opslaan van deze adreslijst naar %1. Prob
                            &lt;/ul&gt;
                            &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                          </translation>
-    </message>
-    <message>
-        <source>10</source>
-        <translation>10</translation>
     </message>
     <message>
         <source>Frequently Asked Questions</source>
@@ -4601,20 +3840,12 @@ Er was een fout opgetreden tijdens het opslaan van deze adreslijst naar %1. Prob
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>Window</source>
         <translation>Venster</translation>
     </message>
     <message>
         <source>Customize the application window options</source>
         <translation>De opties van het toepassingsvenster aanpassen</translation>
-    </message>
-    <message>
-        <source>CheckBox</source>
-        <translation>Selectievakje</translation>
     </message>
     <message>
         <source>Reset to default</source>
@@ -4832,14 +4063,6 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation>Leegmaken</translation>
-    </message>
-    <message>
         <source>Sign/Verify Message</source>
         <translation>Onderteken/Verifiëer Bericht</translation>
     </message>
@@ -4866,10 +4089,6 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
     <message>
         <source>Enter address</source>
         <translation>Voeg adres toe</translation>
-    </message>
-    <message>
-        <source>Write message</source>
-        <translation>Schrijf een bericht</translation>
     </message>
     <message>
         <source>Signature</source>
@@ -4955,18 +4174,6 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
-        <source>CheckBox</source>
-        <translation>Selectievakje</translation>
-    </message>
-    <message>
-        <source>RadioButton</source>
-        <translation>RadioButton</translation>
-    </message>
-    <message>
         <source>Reset to default</source>
         <translation>Terugzetten naar standaardinstelling</translation>
     </message>
@@ -4983,10 +4190,6 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
         <translation>Pas de interne portemonnee-opties aan</translation>
     </message>
     <message>
-        <source>Stake split threshold:</source>
-        <translation>Stake splitsdrempel:</translation>
-    </message>
-    <message>
         <source>Spend unconfirmed change</source>
         <translation>Besteed onbevestigde wijziging</translation>
     </message>
@@ -4999,16 +4202,12 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
         <translation>Pas de nodenetwerkopties aan</translation>
     </message>
     <message>
-        <source>Proxy IP:</source>
-        <translation>Proxy IP:</translation>
+        <source>Enter port</source>
+        <translation>Voer poort in</translation>
     </message>
     <message>
         <source>Enter proxy IP</source>
         <translation>Proxy IP invoeren</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <translation>Poort:</translation>
     </message>
     <message>
         <source>Map port using UPnP</source>
@@ -5017,10 +4216,6 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
     <message>
         <source>Allow incoming connections</source>
         <translation>Sta inkomende connecties toe</translation>
-    </message>
-    <message>
-        <source>Connect through SOCKS5 proxy (default proxy):</source>
-        <translation>Connecteer via SOCKS5 proxy (standaardproxy):</translation>
     </message>
     <message>
         <source>SAVE</source>
@@ -5038,48 +4233,20 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
         <translation>Formulier</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
-    </message>
-    <message>
         <source>Wallet Repair</source>
         <translation>Portemonnee Herstel</translation>
-    </message>
-    <message>
-        <source>The buttons below will restart the wallet with command-line options to repair this wallet, fix issues with corrupt blockchain files or missing/obsolete transactions.</source>
-        <translation>De knoppen hieronder herstarten de portemonnee met commandoregelopties om deze portemonnee te repareren, problemen met corrupte blockchain bestanden of ontbrekende/verouderde transacties op te lossen.</translation>
-    </message>
-    <message>
-        <source>Attempt to recover private keys from a corrupt wallet.dat.</source>
-        <translation>Poog om privé sleutels terug te halen uit een corrupte wallet.dat.</translation>
-    </message>
-    <message>
-        <source>Rescan the blockchain for missing wallet transactions.</source>
-        <translation>Scan de blockchain opnieuw voor ontbrekende portemonneetransacties.</translation>
-    </message>
-    <message>
-        <source>Recover transactions from blockchain (keep-meta-data, e.g. account owner).</source>
-        <translation>Herstel transacties uit de blockchain (keep-meta-data, bijvoorbeeld van de rekeninghouder).</translation>
-    </message>
-    <message>
-        <source>Recover transactions from blockchain (drop meta-data).</source>
-        <translation>Herstel transacties van blockchain (laat meta-data vallen).</translation>
     </message>
     <message>
         <source>Upgrade wallet to latest format on startup. (Note: this is NOT an update of the wallet itself)</source>
         <translation>Upgrade de portemonnee naar het laatste formaat bij het opstarten. (Opmerking: dit is GEEN update van de portemonnee zelf).</translation>
     </message>
     <message>
-        <source>Rebuild blockchain index from current blk000???.dat files.</source>
-        <translation>Bouw de blockchain index opnieuw vanuit huidige blk000???.dat bestanden.</translation>
-    </message>
-    <message>
-        <source>Deletes all local blockchain folders so the wallet synchronizes from scratch.</source>
-        <translation>Verwijder alle lokale blockchain mappen zodat de portemonnee alles opnieuw kan hersynchroniseren.</translation>
-    </message>
-    <message>
         <source>Salvage wallet</source>
         <translation>Red portemonnee</translation>
+    </message>
+    <message>
+        <source>Attempt to recover private keys from a corrupt wallet.dat</source>
+        <translation>Poog om privé sleutels te herstellen van een corrupte wallet.dat</translation>
     </message>
     <message>
         <source>Rescan blockchain file</source>
@@ -5100,10 +4267,6 @@ Vink één of beide selectievakjes aan om beloningen op de inzet en/of masternod
     <message>
         <source>Rebuild index</source>
         <translation>Herbouw index</translation>
-    </message>
-    <message>
-        <source>Delete local blockchain </source>
-        <translation>Verwijder lokale blockchain</translation>
     </message>
     <message>
         <source>This will delete your local blockchain folders and the wallet will synchronize the complete Blockchain from scratch.&lt;br /&gt;&lt;br /&gt;</source>
@@ -5301,26 +4464,6 @@ Weet je zeker dat?
 <context>
     <name>SplashScreen</name>
     <message>
-        <source>EROS Core</source>
-        <translation>EROS Core</translation>
-    </message>
-    <message>
-        <source>Version %1</source>
-        <translation>Versie %1</translation>
-    </message>
-    <message>
-        <source>The Bitcoin Core developers</source>
-        <translation>De Bitcoin Kernontwikkelaars</translation>
-    </message>
-    <message>
-        <source>The Dash Core developers</source>
-        <translation>De Dash Kernontwikkelaars</translation>
-    </message>
-    <message>
-        <source>The EROS Core developers</source>
-        <translation>De EROS Kernontwikkelaars</translation>
-    </message>
-    <message>
         <source>[testnet]</source>
         <translation>[testnet]</translation>
     </message>
@@ -5386,33 +4529,13 @@ Weet je zeker dat?
         <source>Staking not active</source>
         <translation>Staking niet actief</translation>
     </message>
-    <message numerus="yes">
-        <source>%n active connection(s)</source>
-        <translation><numerusform>%n actieve verbinding</numerusform><numerusform>%n actieve verbindingen</numerusform></translation>
-    </message>
     <message>
         <source>Synchronized - Block: %1</source>
         <translation>Gesynchroniseerd - Block: %1</translation>
     </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n uur</numerusform><numerusform>%n uren</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n dag</numerusform><numerusform>%n dagen</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n week</numerusform><numerusform>%n weken</numerusform></translation>
-    </message>
     <message>
         <source>%1 and %2</source>
         <translation>%1 en %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n jaar</numerusform><numerusform>%n jaren</numerusform></translation>
     </message>
     <message>
         <source>Wallet Upgrade</source>
@@ -5449,6 +4572,14 @@ nieuwe back-up aangemaakt worden.
     <message>
         <source>Tor Disabled</source>
         <translation>Tor Uitgeschakeld</translation>
+    </message>
+    <message>
+        <source>FAQ</source>
+        <translation>Veelgestelde vragen</translation>
+    </message>
+    <message>
+        <source>Wallet Locked</source>
+        <translation>Portemonnee Vergrendeld</translation>
     </message>
     <message>
         <source>Available (Locked included)</source>
@@ -5508,10 +4639,6 @@ nieuwe back-up aangemaakt worden.
 </context>
 <context>
     <name>TransactionDesc</name>
-    <message numerus="yes">
-        <source>Open for %n more block(s)</source>
-        <translation><numerusform>Open voor nog %n blokken</numerusform><numerusform>Open voor nog %n blok</numerusform></translation>
-    </message>
     <message>
         <source>Open until %1</source>
         <translation>Open tot %1</translation>
@@ -5572,10 +4699,6 @@ nieuwe back-up aangemaakt worden.
         <source>, has not been successfully broadcast yet</source>
         <translation>, is nog niet succesvol uitgezonden</translation>
     </message>
-    <message numerus="yes">
-        <source>, broadcast through %n node(s)</source>
-        <translation><numerusform>, broadcast via %n nodes</numerusform><numerusform>, broadcast via %n node</numerusform></translation>
-    </message>
     <message>
         <source>Date</source>
         <translation>Datum</translation>
@@ -5615,10 +4738,6 @@ nieuwe back-up aangemaakt worden.
     <message>
         <source>Credit</source>
         <translation>Credit</translation>
-    </message>
-    <message numerus="yes">
-        <source>matures in %n more block(s)</source>
-        <translation><numerusform>volgroeid in %n blokken</numerusform><numerusform>volgroeid in %n blok</numerusform></translation>
     </message>
     <message>
         <source>not accepted</source>
@@ -5703,10 +4822,6 @@ nieuwe back-up aangemaakt worden.
         <source>Address</source>
         <translation>Adres</translation>
     </message>
-    <message numerus="yes">
-        <source>Open for %n more block(s)</source>
-        <translation><numerusform>Open voor nog %n blokken</numerusform><numerusform>Open voor nog %n blok</numerusform></translation>
-    </message>
     <message>
         <source>Open until %1</source>
         <translation>Open tot %1</translation>
@@ -5752,40 +4867,8 @@ nieuwe back-up aangemaakt worden.
         <translation>Ontvangen van</translation>
     </message>
     <message>
-        <source>ERS Stake</source>
-        <translation>ERS Stake</translation>
-    </message>
-    <message>
-        <source>zERS Stake</source>
-        <translation>zERS Stake</translation>
-    </message>
-    <message>
-        <source>ERS Cold Stake</source>
-        <translation>ERS Cold Stake</translation>
-    </message>
-    <message>
         <source>Stake delegation</source>
         <translation>Stake delegatie</translation>
-    </message>
-    <message>
-        <source>Converted ERS to zERS</source>
-        <translation>Geconverteerde ERS naar zERS</translation>
-    </message>
-    <message>
-        <source>Spent zERS</source>
-        <translation>Bestede zERS</translation>
-    </message>
-    <message>
-        <source>Received ERS from zERS</source>
-        <translation>Ontvangen ERS van zERS</translation>
-    </message>
-    <message>
-        <source>Minted Change as zERS from zERS Spend</source>
-        <translation>Gemint wisselgeld als zERS van bestede zERS</translation>
-    </message>
-    <message>
-        <source>Converted zERS to ERS</source>
-        <translation>Geconverteerde zERS naar ERS</translation>
     </message>
     <message>
         <source>Sent to</source>
@@ -5798,10 +4881,6 @@ nieuwe back-up aangemaakt worden.
     <message>
         <source>Payment to yourself</source>
         <translation>Betaling naar jezelf</translation>
-    </message>
-    <message>
-        <source>ERS Stake on behalf of</source>
-        <translation>ERS Stake in naam van</translation>
     </message>
     <message>
         <source>Stake delegation spent by</source>
@@ -5957,18 +5036,6 @@ nieuwe back-up aangemaakt worden.
         <source>Form</source>
         <translation>Formulier</translation>
     </message>
-    <message>
-        <source>Received from Bob</source>
-        <translation>Ontvangen van Bob</translation>
-    </message>
-    <message>
-        <source>18/05/18</source>
-        <translation>18/05/18</translation>
-    </message>
-    <message>
-        <source>+0.000585 ERS</source>
-        <translation>+0.000585 ERS</translation>
-    </message>
 </context>
 <context>
     <name>WalletModel</name>
@@ -5976,11 +5043,7 @@ nieuwe back-up aangemaakt worden.
         <source>Send Coins</source>
         <translation>Verzend Munten</translation>
     </message>
-    <message>
-        <source>SwiftX doesn't support sending values that high yet. Transactions are currently limited to %1 ERS.</source>
-        <translation>SwiftTX ondersteunt geen verzendwaarden die zo hoog zijn. Transacties zijn momenteel beperkt tot %1 ERS.</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>WelcomeContentWidget</name>
     <message>
@@ -6051,49 +5114,6 @@ EROS Core Portemonnee</translation>
     </message>
 </context>
 <context>
-    <name>ZErsControlDialog</name>
-    <message>
-        <source>Select zERS to Spend</source>
-        <translation>Selecteer zERS om te besteden</translation>
-    </message>
-    <message>
-        <source>Coin Control</source>
-        <translation>Munt Controle</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation>Druk Knop</translation>
-    </message>
-    <message>
-        <source>zErs</source>
-        <translation>zErs</translation>
-    </message>
-    <message>
-        <source>0.00 </source>
-        <translation>0.00 </translation>
-    </message>
-    <message>
-        <source>Quantity:</source>
-        <translation>Kwantiteit:</translation>
-    </message>
-    <message>
-        <source>Is Spendable</source>
-        <translation>Is Uitgeefbaar</translation>
-    </message>
-    <message>
-        <source>0</source>
-        <translation>0</translation>
-    </message>
-    <message>
-        <source>Select/Deselect All</source>
-        <translation>Selecteer/Deselecteer Alles</translation>
-    </message>
-    <message>
-        <source>Select zERS Denominations to Spend</source>
-        <translation>Selecteer zERS Denominaties om te Besteden</translation>
-    </message>
-</context>
-<context>
     <name>eros-core</name>
     <message>
         <source>(1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)</source>
@@ -6148,14 +5168,6 @@ EROS Core Portemonnee</translation>
         <translation>Activeer cold staking functionaliteit (0-1, standaard: %u). Uitgeschakeld als staking=0</translation>
     </message>
     <message>
-        <source>Enable or disable staking functionality for ERS inputs (0-1, default: %u)</source>
-        <translation>In- of uitschakelen staking functionaliteit voor ERS inputs (0-1, standaard: %u)</translation>
-    </message>
-    <message>
-        <source>Enable or disable staking functionality for zERS inputs (0-1, default: %u)</source>
-        <translation>In- of uitschakelen staking functionaliteit voor zERS inputs (0-1, standaard: %u)</translation>
-    </message>
-    <message>
         <source>Enable spork administration functionality with the appropriate private key.</source>
         <translation>Activeer de spork administratie functionaliteit met de juiste private sleutel.</translation>
     </message>
@@ -6192,14 +5204,6 @@ EROS Core Portemonnee</translation>
         <translation>Uitvoeren commando wanneer het beste blok verandert (%s in cmd is vervangen door block hash)</translation>
     </message>
     <message>
-        <source>Fees (in ERS/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
-        <translation>Kosten (in ERS/Kb) kleiner dan dit worden beschouwd als zero fee voor heruitzending (standaard: %s)</translation>
-    </message>
-    <message>
-        <source>Fees (in ERS/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
-        <translation>Kosten (in ERS/Kb) kleiner dan dit worden beschouwd als zero fee voor transactie verrichting (standaard: %s)</translation>
-    </message>
-    <message>
         <source>Flush database activity from memory pool to disk log every &lt;n&gt; megabytes (default: %u)</source>
         <translation>Leeg database activiteit uit geheugen pool naar schijf log elke keer&lt;n&gt;megabytes (default: %u)</translation>
     </message>
@@ -6218,10 +5222,6 @@ EROS Core Portemonnee</translation>
     <message>
         <source>Invalid amount for -maxtxfee=&lt;amount&gt;: '%s' (must be at least the minrelay fee of %s to prevent stuck transactions)</source>
         <translation>Ongeldige hoeveelheid voor -maxtxfee=&lt;amount&gt;: '%s' (moet ten minste de minimale vergoeding van %s zijn om hangende transacties te voorkomen)</translation>
-    </message>
-    <message>
-        <source>Keep the specified amount available for spending at all times (default: 0)</source>
-        <translation>Houd het gespecificeerde bedrag altijd beschikbaar voor uitgaven te allen tijde (standaard: 0)</translation>
     </message>
     <message>
         <source>Log transaction priority and fee per kB when mining blocks (default: %u)</source>
@@ -6254,10 +5254,6 @@ EROS Core Portemonnee</translation>
     <message>
         <source>Output debugging information (default: %u, supplying &lt;category&gt; is optional)</source>
         <translation>Output debugging informatie (default: %u, verschaffen &lt;category&gt; is optioneel)</translation>
-    </message>
-    <message>
-        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
-        <translation>Query voor peer adressen via DNS lookup, als er weinig adressen zijn (standaard: 1 tenzij -connect)</translation>
     </message>
     <message>
         <source>Randomize credentials for every proxy connection. This enables Tor stream isolation (default: %u)</source>
@@ -6352,10 +5348,6 @@ EROS Core Portemonnee</translation>
         <translation>Je moet een masternodeprivkey opgeven in de configuratie. Raadpleeg de documentatie voor hulp.</translation>
     </message>
     <message>
-        <source>(18325 could be used only on mainnet)</source>
-        <translation>(18325 kan alleen op mainnet worden gebruikt)</translation>
-    </message>
-    <message>
         <source>(default: %s)</source>
         <translation>(standaard: %s)</translation>
     </message>
@@ -6364,16 +5356,8 @@ EROS Core Portemonnee</translation>
         <translation>(standaard: 1)</translation>
     </message>
     <message>
-        <source>(must be 18325 for mainnet)</source>
-        <translation>(moet 18325 voor mainnet zijn)</translation>
-    </message>
-    <message>
         <source>Accept command line and JSON-RPC commands</source>
         <translation>Accepteer command line en JSON-RPC commando's</translation>
-    </message>
-    <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Accepteer verbindingen van buitenaf (standaard: 1 als geen -proxy of -connect)</translation>
     </message>
     <message>
         <source>Accept public REST requests (default: %u)</source>
@@ -6410,10 +5394,6 @@ EROS Core Portemonnee</translation>
     <message>
         <source>Cannot downgrade wallet</source>
         <translation>Kan de portemonnee niet downgraden</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Verbind alleen met de opgegeven node(s)</translation>
     </message>
     <message>
         <source>Connect through SOCKS5 proxy</source>
@@ -6560,14 +5540,6 @@ EROS Core Portemonnee</translation>
         <translation>Kan host: poortreeks niet parseren</translation>
     </message>
     <message>
-        <source>Failed to read block</source>
-        <translation>Mislukt om block te lezen</translation>
-    </message>
-    <message>
-        <source>Fee (in ERS/kB) to add to transactions you send (default: %s)</source>
-        <translation>Fee (in ERS/kB) om toe te voegen aan transacties die je verzendt (standaard: %s)</translation>
-    </message>
-    <message>
         <source>Force safe mode (default: %u)</source>
         <translation>Forceer safe mode (standaard: %u)</translation>
     </message>
@@ -6636,16 +5608,8 @@ EROS Core Portemonnee</translation>
         <translation>Ongeldige netmask opgegeven in -whitelist: '%s'</translation>
     </message>
     <message>
-        <source>Invalid port detected in masternode.conf</source>
-        <translation>Ongeldige poort gedetecteerd in masternode.conf</translation>
-    </message>
-    <message>
         <source>Recalculating ERS supply...</source>
         <translation>Hercalculatie van ERS aanbod...</translation>
-    </message>
-    <message>
-        <source>Reindex the ERS and zERS money supply statistics</source>
-        <translation>Indexeer de ERS- en zERS-geldvoorraadstatistieken opnieuw</translation>
     </message>
     <message>
         <source>Reindexing zerocoin database...</source>
@@ -6690,10 +5654,6 @@ EROS Core Portemonnee</translation>
     <message>
         <source>Enable SwiftX, show confirmations for locked transactions (bool, default: %s)</source>
         <translation>Schakel SwiftX in, toon bevestigingen voor vergrendelde transacties (bool, standaard: %s)</translation>
-    </message>
-    <message>
-        <source>Error: The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.</source>
-        <translation>Fout: De transactie is afgewezen! Dit kan gebeuren als sommige munten in je portemonnee al waren uitgegeven, bijvoorbeeld als je een kopie van wallet.dat gebruikt en munten in de kopie waren besteed maar hier niet als zodanig gemarkeerd.</translation>
     </message>
     <message>
         <source>Error: Unsupported argument -checklevel found. Checklevel must be level 4.</source>
@@ -6794,10 +5754,6 @@ EROS Core Portemonnee</translation>
     <message>
         <source>Keep at most &lt;n&gt; unconnectable transactions in memory (default: %u)</source>
         <translation>Houd maximaal &lt;n&gt;niet te verbinden transacties in het geheugen (standaard: %u)</translation>
-    </message>
-    <message>
-        <source>Limit size of signature cache to &lt;n&gt; entries (default: %u)</source>
-        <translation>Limiet grootte van signature cache naar &lt;n&gt; invoer (standaard: %u)</translation>
     </message>
     <message>
         <source>Line: %d</source>
@@ -7347,16 +6303,36 @@ EROS Core Portemonnee</translation>
         <translation>Zenden</translation>
     </message>
     <message>
-        <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <source>EROS address or contact label</source>
+        <translation>EROS adres of contactlabel</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Bedrag</translation>
+    </message>
+    <message>
+        <source>Customize fee</source>
+        <translation>Kosten aanpassen</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Alles wissen</translation>
+    </message>
+    <message>
+        <source>Add recipient</source>
+        <translation>Voeg bestemmeling toe</translation>
+    </message>
+    <message>
+        <source>Total to send</source>
+        <translation>Totaal te versturen</translation>
+    </message>
+    <message>
+        <source>Reset to default</source>
+        <translation>Terugzetten naar standaardinstelling</translation>
     </message>
     <message>
         <source>Include delegated</source>
         <translation>Reken delegatie mee</translation>
-    </message>
-    <message>
-        <source>PushButton</source>
-        <translation>Druk Knop</translation>
     </message>
 </context>
 </TS>

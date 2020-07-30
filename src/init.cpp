@@ -20,6 +20,7 @@
 #include "amount.h"
 #include "checkpoints.h"
 #include "compat/sanity.h"
+#include "consensus/upgrades.h"
 #include "consensus/zerocoin_verify.h"
 #include "fs.h"
 #include "httpserver.h"
@@ -67,6 +68,9 @@
 #ifndef WIN32
 #include <signal.h>
 #endif
+
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -499,6 +503,7 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-limitdescendantcount=<n>", strprintf(_("Do not accept transactions if any ancestor would have <n> or more in-mempool descendants (default: %u)"), DEFAULT_DESCENDANT_LIMIT));
         strUsage += HelpMessageOpt("-limitdescendantsize=<n>", strprintf(_("Do not accept transactions if any ancestor would have more than <n> kilobytes of in-mempool descendants (default: %u)."), DEFAULT_DESCENDANT_SIZE_LIMIT));
         strUsage += HelpMessageOpt("-sporkkey=<privkey>", _("Enable spork administration functionality with the appropriate private key."));
+        strUsage += HelpMessageOpt("-nuparams=upgradeName:activationHeight", "Use given activation height for specified network upgrade (regtest-only)");
     }
     strUsage += HelpMessageOpt("-debug=<category>", strprintf(_("Output debugging information (default: %u, supplying <category> is optional)"), 0) + ". " +
         _("If <category> is not supplied, output all debugging information.") + _("<category> can be:") + " " + ListLogCategories() + ".");
@@ -898,6 +903,42 @@ void InitParameterInteraction()
     }
 }
 
+bool InitNUParams()
+{
+    if (!mapMultiArgs["-nuparams"].empty()) {
+        // Allow overriding network upgrade parameters for testing
+        if (Params().NetworkIDString() != "regtest") {
+            return UIError("Network upgrade parameters may only be overridden on regtest.");
+        }
+        const std::vector<std::string>& deployments = mapMultiArgs["-nuparams"];
+        for (auto i : deployments) {
+            std::vector<std::string> vDeploymentParams;
+            boost::split(vDeploymentParams, i, boost::is_any_of(":"));
+            if (vDeploymentParams.size() != 2) {
+                return UIError("Network upgrade parameters malformed, expecting hexBranchId:activationHeight");
+            }
+            int nActivationHeight;
+            if (!ParseInt32(vDeploymentParams[1], &nActivationHeight)) {
+                return UIError(strprintf("Invalid nActivationHeight (%s)", vDeploymentParams[1]));
+            }
+            bool found = false;
+            // Exclude base network from upgrades
+            for (auto j = Consensus::BASE_NETWORK + 1; j < Consensus::MAX_NETWORK_UPGRADES; ++j) {
+                if (vDeploymentParams[0] == NetworkUpgradeInfo[j].strName) {
+                    UpdateNetworkUpgradeParameters(Consensus::UpgradeIndex(j), nActivationHeight);
+                    found = true;
+                    LogPrintf("Setting network upgrade activation parameters for %s to height=%d\n", vDeploymentParams[0], nActivationHeight);
+                    break;
+                }
+            }
+            if (!found) {
+                return UIError(strprintf("Invalid network upgrade (%s)", vDeploymentParams[0]));
+            }
+        }
+    }
+    return true;
+}
+
 static std::string ResolveErrMsg(const char * const optname, const std::string& strBind)
 {
     return strprintf(_("Cannot resolve -%s address: '%s'"), optname, strBind);
@@ -1067,6 +1108,9 @@ bool AppInit2()
 
     nMaxTipAge = GetArg("-maxtipage", DEFAULT_MAX_TIP_AGE);
 
+    if (!InitNUParams())
+        return false;
+
     // ********************************************************* Step 4: application initialization: dir lock, daemonize, pidfile, debug log
 
     // Initialize elliptic curve code
@@ -1081,10 +1125,11 @@ bool AppInit2()
     std::string strDataDir = GetDataDir().string();
 #ifdef ENABLE_WALLET
     // Wallet file must be a plain filename without a directory
-    if (strWalletFile != fs::basename(strWalletFile) + fs::extension(strWalletFile))
+    fs::path wallet_file_path(strWalletFile);
+    if (strWalletFile != wallet_file_path.filename().string())
         return UIError(strprintf(_("Wallet %s resides outside data directory %s"), strWalletFile, strDataDir));
 #endif
-    // Make sure only a single PIVX process is using the data directory.
+    // Make sure only a single EROS process is using the data directory.
     fs::path pathLockFile = GetDataDir() / ".lock";
     FILE* file = fsbridge::fopen(pathLockFile, "a"); // empty lock file; created if it doesn't exist.
     if (file) fclose(file);
@@ -1536,17 +1581,17 @@ bool AppInit2()
                     LOCK(cs_main);
                     chainHeight = chainActive.Height();
 
-                    // initialize PIV and zPIV supply to 0
+                    // initialize ERS and zERS supply to 0
                     mapZerocoinSupply.clear();
                     for (auto& denom : libzerocoin::zerocoinDenomList) mapZerocoinSupply.insert(std::make_pair(denom, 0));
                     nMoneySupply = 0;
 
-                    // Load PIV and zPIV supply from DB
+                    // Load ERS and zERS supply from DB
                     if (chainHeight >= 0) {
                         const uint256& tipHash = chainActive[chainHeight]->GetBlockHash();
                         CLegacyBlockIndex bi;
 
-                        // Load zPIV supply map
+                        // Load zERS supply map
                         if (!fReindexZerocoin && consensus.NetworkUpgradeActive(chainHeight, Consensus::UPGRADE_ZC) &&
                                 !zerocoinDB->ReadZCSupply(mapZerocoinSupply)) {
                             // try first reading legacy block index from DB
@@ -1558,7 +1603,7 @@ bool AppInit2()
                             }
                         }
 
-                        // Load PIV supply amount
+                        // Load ERS supply amount
                         if (!fReindexMoneySupply && !pblocktree->ReadMoneySupply(nMoneySupply)) {
                             // try first reading legacy block index from DB
                             if (pblocktree->ReadLegacyBlockIndex(tipHash, bi)) {
@@ -1585,7 +1630,7 @@ bool AppInit2()
                 // Recalculate money supply
                 if (fReindexMoneySupply) {
                     LOCK(cs_main);
-                    // Skip zpiv if already reindexed
+                    // Skip zers if already reindexed
                     RecalculateERSSupply(1, fReindexZerocoin);
                 }
 
@@ -1831,7 +1876,7 @@ bool AppInit2()
         fVerifyingBlocks = false;
 
         if (!zwalletMain->GetMasterSeed().IsNull()) {
-            //Inititalize zPIVWallet
+            //Inititalize zERSWallet
             uiInterface.InitMessage(_("Syncing ERS wallet..."));
 
             //Load zerocoin mint hashes to memory

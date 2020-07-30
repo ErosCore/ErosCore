@@ -583,16 +583,35 @@ bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew)
 
     //require at least 6 signatures
     int nMaxSignatures = 0;
-    for (CMasternodePayee& payee : vecPayments)
+    CAmount nReward = GetBlockValue(nBlockHeight);
+    CAmount requiredMasternodePayment = GetMasternodePayment(nBlockHeight, nReward);
+
+    bool isValidPayee = false;
+    for (CMasternodePayee& payee : vecPayments) {
         if (payee.nVotes >= nMaxSignatures && payee.nVotes >= MNPAYMENTS_SIGNATURES_REQUIRED)
             nMaxSignatures = payee.nVotes;
 
+        for (CTxOut out : txNew.vout) {
+            if (payee.scriptPubKey == out.scriptPubKey) {
+                if(out.nValue == requiredMasternodePayment)
+                    isValidPayee = true;
+            }
+        }
+    }
     // if we don't have at least 6 signatures on a payee, approve whichever is the longest chain
-    if (nMaxSignatures < MNPAYMENTS_SIGNATURES_REQUIRED) return true;
+    if(!isValidPayee) {
+        for (CTxOut out : txNew.vout) {
+            if(out.nValue == requiredMasternodePayment) {
+                CTxDestination address2;
+                ExtractDestination(out.scriptPubKey, address2);
+                LogPrint(BCLog::MASTERNODE, "%s : Abnormal Masternode payment address (%s).\n",
+                                         __func__, EncodeDestination(address2));
+            }
+        }
+    }
+    if (isValidPayee && nMaxSignatures < MNPAYMENTS_SIGNATURES_REQUIRED) return true;
 
     std::string strPayeesPossible = "";
-    CAmount nReward = GetBlockValue(nBlockHeight);
-    CAmount requiredMasternodePayment = GetMasternodePayment(nBlockHeight, nReward);
 
     for (CMasternodePayee& payee : vecPayments) {
         bool found = false;

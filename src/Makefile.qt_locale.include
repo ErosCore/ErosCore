@@ -3,6 +3,7 @@ QT_TS = \
   qt/locale/eros_en.ts \
   qt/locale/eros_en_US.ts \
   qt/locale/eros_es.ts \
+  qt/locale/eros_es_ES.ts \
   qt/locale/eros_fr_FR.ts \
   qt/locale/eros_hr_HR.ts \
   qt/locale/eros_it.ts \
